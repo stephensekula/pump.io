@@ -2825,7 +2825,8 @@
                     multiple: false,
                     validation: {
                         allowedExtensions: ["jpeg", "jpg", "png", "gif", "svg", "svgz", "mp4", "ogv", "webm"],
-                        acceptFiles: "image/*"
+                        acceptFiles: "image/*",
+			sizeLimit: 50000000.0
                     }
                 }).on("complete", function(event, id, fileName, responseJSON) {
 
