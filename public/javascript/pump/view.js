@@ -2809,7 +2809,7 @@
                         endpoint: "/main/upload"
                     },
                     text: {
-                        uploadButton: '<i class="icon-upload icon-white"></i> Picture file'
+                        uploadButton: '<i class="icon-upload icon-white"></i> Media file'
                     },
                     template: '<div class="qq-uploader">' +
                         '<pre class="qq-upload-drop-area"><span>{dragZoneText}</span></pre>' +
@@ -2824,7 +2824,7 @@
                     autoUpload: false,
                     multiple: false,
                     validation: {
-                        allowedExtensions: ["jpeg", "jpg", "png", "gif", "svg", "svgz"],
+                        allowedExtensions: ["jpeg", "jpg", "png", "gif", "svg", "svgz", "mp4", "ogv", "webm"],
                         acceptFiles: "image/*"
                     }
                 }).on("complete", function(event, id, fileName, responseJSON) {
