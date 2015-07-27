@@ -2824,8 +2824,8 @@
                     autoUpload: false,
                     multiple: false,
                     validation: {
-                        allowedExtensions: ["jpeg", "jpg", "png", "gif", "svg", "svgz", "mp4", "ogv", "webm"],
-                        acceptFiles: "image/*",
+                        allowedExtensions: ["jpeg", "jpg", "png", "gif", "svg", "svgz", "mp4", "ogv", "webm", "mov"],
+                        acceptFiles: "video/*,image/*",
 			sizeLimit: 50000000.0
                     }
                 }).on("complete", function(event, id, fileName, responseJSON) {
