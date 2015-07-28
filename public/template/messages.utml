@@ -23,7 +23,7 @@
 
 
 
-    <% if (recent_messages > 0) { %>
+    <% if (recent_messages.length > 0) { %>
     <span class="badge badge-important"><%- recent_messages.length %></span>
     <% } %>
   </button>
