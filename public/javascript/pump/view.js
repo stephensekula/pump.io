@@ -554,7 +554,8 @@
         events: {
             "click #logout": "logout",
             "click #post-note-button": "postNoteModal",
-            "click #post-picture-button": "postPictureModal"
+            "click #post-picture-button": "postPictureModal",
+	    "click #refresh-view": "refreshView"
         },
         postNoteModal: function() {
             var view = this;
@@ -633,6 +634,12 @@
             };
 
             Pump.ajax(options);
+        },
+        refreshView: function() {
+            var view = this;
+	    Pump.refreshStreams();
+	    Pump.body.nav.render();
+	    //Pump.UserNav.render();
         },
         getStreams: function() {
             var view = this,
@@ -3407,5 +3414,17 @@
             });
         }
     });
+
+
+    // Try to automatically set the height of certain parts of the web client view
+    //$("#major-stream-view").height($(window).innerHeight()-2*$(document).find("div.navbar").height());
+    $("#major-stream-view").height($(window).innerHeight()-$("#major-stream-view").offset().top);
+    $("#sidebar").height($(window).innerHeight()-$("#sidebar").offset().top);
+
+    $(window).resize( function() { 
+	$("#major-stream-view").height($(window).innerHeight()-2*$(document).find("div.navbar").height());
+	$("#sidebar").height($(window).innerHeight()-2*$(document).find("div.navbar").height());
+    });
+
 
 })(window._, window.$, window.Backbone, window.Pump);
