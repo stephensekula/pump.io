@@ -13,6 +13,13 @@
     <% } %>
   </div>
 
+  <div class="btn-group">
+    <button type="button" class="btn btn-small primary" id="refresh-view" title="Refresh the View">
+      <span class="hidden-phone"></span><i class="icon-retweet"></i>
+    </button>
+
+  </div>
+
   <ul class="nav pull-right">
     <li id="fat-menu" class="dropdown">
       <a href="#" id="profile-dropdown" role="button" class="dropdown-toggle" data-toggle="dropdown"> 
@@ -33,6 +40,7 @@
         <li><a tabindex="-1" href="/main/settings">Settings</a></li>
         <li><a tabindex="-1" href="/main/account">Account</a></li>
         <li class="divider"></li>
+	<li><small>Connected since: sessionstart  </small></li>
         <li><a tabindex="-1" id="logout" href="#">Log out</a></li>
       </ul>
     </li>
