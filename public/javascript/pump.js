@@ -179,6 +179,9 @@ if (!window.Pump) {
         }
     });
 
+    // Store the time at which this Pump session was created
+    Pump.sessionStartTime = new Date();
+
     // Renew the cookie session
 
     Pump.renewSession = function(callback) {
@@ -470,7 +473,7 @@ if (!window.Pump) {
 
         // From http://ejohn.org/blog/learning-from-twitter/
 
-        $(window).scroll(function() {
+        $("#major-stream-view").scroll(function() {
             didScroll = true;
         });
 
@@ -478,7 +481,7 @@ if (!window.Pump) {
             var streams;
             if (didScroll) {
                 didScroll = false;
-                if ($(window).scrollTop() >= $(document).height() - $(window).height() - 10) {
+                if ($("#major-stream-view").scrollTop() >= $("#major-stream").height() - $("#major-stream-view").height() - 10) {
                     streams = Pump.getStreams();
                     if (streams.major && streams.major.nextLink()) {
                         Pump.body.startLoad();
