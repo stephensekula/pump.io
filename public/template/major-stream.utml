@@ -1,4 +1,4 @@
-<ul class="media-list" id="major-stream">
+<ul class="media-list scrollable-y" id="major-stream" height="500px">
   <% _.each(_.uniq(major.items), function(activity) { %>
   <%= partial("major-activity", {activity: activity, headless: headless}) %>
   <% }); %>
