@@ -3302,6 +3302,14 @@
         modalView.on("ready", function() {
             $("body").append(modalView.el);
             modalView.$el.modal('show');
+	    for (ichild = 0; ichild < modalView.el.children.length; ichild++) {
+		var child = modalView.el.children[ichild];
+		if (child.className == "modal-body") { 
+		    var model_body_height = $(window).innerHeight() * 0.5;
+		    var height_string = 'height: ' + model_body_height.toString() + 'px;';
+		    child.setAttribute('style',height_string);
+		}
+	    }
             if (options.ready) {
                 options.ready();
             }
@@ -3504,6 +3512,5 @@
 	$("#major-stream").height($(window).innerHeight()-$(document).find("div.navbar").height()-$("#major-stream").offset().top);
 	$("#minor-stream").height(          $(window).innerHeight()-$(document).find("div.navbar").height() - $("#minor-stream").offset().top);
     });
-
 
 })(window._, window.$, window.Backbone, window.Pump);
