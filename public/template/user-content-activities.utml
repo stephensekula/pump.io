@@ -1,8 +1,8 @@
 <div class="row activities user-content" id="user-content-activities">
-  <div class="span9 scrollable-y" id="major-stream-view" >
+  <div class="span9" >
     <%= partial("major-stream", {headless: true}) %>
   </div>
-  <div class="span3 scrollable-y" id="sidebar">
+  <div class="span3" id="sidebar">
     <h3>Meanwhile...</h3>
     <%= partial("minor-stream", {headless: true}) %>
   </div>
