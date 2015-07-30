@@ -332,6 +332,8 @@
                     runTemplate(template, main, setOutput);
                 });
             }
+
+
             return this;
         },
         stopSpin: function() {
@@ -564,6 +566,7 @@
         postPictureModal: function() {
             var view = this;
             view.showPostingModal('#post-picture-button', Pump.PostPictureModal);
+
         },
         showPostingModal: function(btn, Cls) {
             var view = this,
@@ -591,6 +594,12 @@
                 }
             });
 
+	    // Set the size of the modal based on window and document information
+	    //if ( $("#modal-picture").offset().bottom < 10 ) {
+		//$("#modal-picture").height( $(window).innerHeight() - $("#major-stream-view").offset().top - 10 );
+		//$("#modal-picture").height( 50 );
+	    //}
+	    
             return false;
         },
         logout: function() {
@@ -1215,6 +1224,7 @@
     Pump.MajorStreamView = Pump.TemplateView.extend({
         templateName: 'major-stream',
         modelName: 'activities',
+	didScroll: false,
         parts: ["major-activity",
                 "responses",
                 "reply",
@@ -1230,7 +1240,51 @@
                     data: ["headless"]
                 }
             }
-        }
+        },
+	events: {
+	    "scroll": "handleScroll",
+	    "resize": "render"
+	},
+	initialize: function() {
+	    Pump.TemplateView.prototype.initialize.call(this);
+	    _.bindAll(this, 'handleScroll','render');
+	    this.listenTo(this.model, 'sync change', this.render);
+	    this.model.fetch();
+	    this.render();
+	},
+        handleScroll: function() {
+            this.didScroll = true;
+	    var streams;
+            if (this.$el.scrollTop() >= this.$el.prop("scrollHeight") - this.$el.height() - 10) {
+		streams = Pump.getStreams();
+		if (streams.major && streams.major.nextLink()) {
+                    Pump.body.startLoad();
+                    streams.major.getNext(function(err) {
+			Pump.body.endLoad();
+                    });
+		}
+            }
+        },
+	render: function() {
+	    _.defer( function() {
+		if ($("#major-stream")) {
+		    if ($(document).find("div.navbar") && $(document).find("div.navbar").height()) {
+			if ($("#major-stream").offset()) {
+			    $("#major-stream").height ( $(window).innerHeight() 
+					      - $(document).find("div.navbar").height() 
+					      - $("#major-stream").offset().top);
+			} else {
+			    $("#major-stream").height ( $(window).innerHeight() 
+					      - $(document).find("div.navbar").height() );
+			}
+			
+		    } else {
+			$("#major-stream").height ( $(window).innerHeight() *0.75 );
+		    }
+		}
+	    });
+	    return this;
+	},
     });
 
     Pump.MinorStreamView = Pump.TemplateView.extend({
@@ -1246,7 +1300,36 @@
                     data: ["headless"]
                 }
             }
-        }
+        },
+	events: {
+	    "resize": "render"
+	},
+	initialize: function() {
+	    Pump.TemplateView.prototype.initialize.call(this);
+	    _.bindAll(this, 'render');
+	    this.model.fetch();
+	    this.render();
+	},
+	render: function() {
+	    _.defer( function() {
+		if ($("#minor-stream")) {
+		    if ($(document).find("div.navbar") && $(document).find("div.navbar").height()) {
+			if ($("#minor-stream").offset()) {
+			    $("#minor-stream").height ( $(window).innerHeight() 
+					      - $(document).find("div.navbar").height() 
+					      - $("#minor-stream").offset().top);
+			} else {
+			    $("#minor-stream").height ( $(window).innerHeight() 
+					      - $(document).find("div.navbar").height() );
+			}
+			
+		    } else {
+			$("#minor-stream").height ( $(window).innerHeight() *0.75 );
+		    }
+		}
+	    });
+	    return this;
+	},
     });
 
     Pump.InboxContent = Pump.ContentView.extend({
@@ -2835,6 +2918,7 @@
                         acceptFiles: "video/*,image/*",
 			sizeLimit: 50000000.0
                     }
+
                 }).on("complete", function(event, id, fileName, responseJSON) {
 
                     var stream = Pump.principalUser.majorStream,
@@ -3215,7 +3299,6 @@
         modalView = new Cls(options);
 
         // When it's ready, show immediately
-
         modalView.on("ready", function() {
             $("body").append(modalView.el);
             modalView.$el.modal('show');
@@ -3224,9 +3307,11 @@
             }
         });
 
+
         // render it (will fire "ready")
 
         modalView.render();
+
     };
 
     Pump.resetWysihtml5 = function(el) {
@@ -3415,15 +3500,9 @@
         }
     });
 
-
-    // Try to automatically set the height of certain parts of the web client view
-    //$("#major-stream-view").height($(window).innerHeight()-2*$(document).find("div.navbar").height());
-    $("#major-stream-view").height($(window).innerHeight()-$("#major-stream-view").offset().top);
-    $("#sidebar").height($(window).innerHeight()-$("#sidebar").offset().top);
-
     $(window).resize( function() { 
-	$("#major-stream-view").height($(window).innerHeight()-2*$(document).find("div.navbar").height());
-	$("#sidebar").height($(window).innerHeight()-2*$(document).find("div.navbar").height());
+	$("#major-stream").height($(window).innerHeight()-$(document).find("div.navbar").height()-$("#major-stream").offset().top);
+	$("#minor-stream").height(          $(window).innerHeight()-$(document).find("div.navbar").height() - $("#minor-stream").offset().top);
     });
 
 
