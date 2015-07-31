@@ -2806,6 +2806,7 @@
         className: "modal-holder",
         templateName: 'post-note',
         parts: ["recipient-selector"],
+	waitOnClose: false,
         ready: function() {
             var view = this;
 
@@ -2817,7 +2818,9 @@
             view.$("#note-cc").select2(Pump.selectOpts());
         },
         events: {
-            "click #send-note": "postNote"
+            "click #send-note": "postNote",
+	    "click #close-post-note":  "sureToClose",
+	    "keydown": "handleKey",
         },
         postNote: function(ev) {
             var view = this,
@@ -2872,7 +2875,29 @@
                     view.remove();
                 }
             });
-        }
+        },
+	handleKey: function(ev) {
+	    if (ev.keyCode == 27 && !(this.waitOnClose)) {
+		this.waitOnClose = true;
+		this.sureToClose(ev);
+	    }
+	},
+	sureToClose: function(ev) {
+	    var view = this;
+
+	    var prompt = "Are you sure you want to stop posting this note?";
+	    
+	    Pump.areYouSure(prompt, function(err, sure) {
+                if (sure) {
+		    view.$el.modal('hide');
+		    Pump.resetWysihtml5(view.$('#note-content'));
+		    view.waitOnClose = false;
+		    view.remove();
+		} else {
+		    view.waitOnClose = false;
+		}
+	    });
+	}
     });
 
     Pump.PostPictureModal = Pump.TemplateView.extend({
@@ -2880,9 +2905,13 @@
         className: "modal-holder",
         templateName: 'post-picture',
         parts: ["recipient-selector"],
+	waitOnClose: false,
         events: {
-            "click #send-picture": "postPicture"
+            "click #send-picture":        "postPicture",
+	    "click #close-post-picture":  "sureToClose",
+	    "keydown": "handleKey",
         },
+	
         ready: function() {
             var view = this;
 
@@ -2974,6 +3003,31 @@
                 });
             }
         },
+	handleKey: function(ev) {
+	    if (ev.keyCode == 27 && !(this.waitOnClose)) {
+		this.waitOnClose = true;
+		this.sureToClose(ev);
+	    }
+	},
+	sureToClose: function(ev) {
+	    var view = this;
+
+	    var prompt = "Are you sure you want to stop posting this media?";
+	    
+            Pump.areYouSure(prompt, function(err, sure) {
+                if (sure) {
+                    view.$el.modal('hide');
+                    view.stopSpin();
+                    view.$("#picture-fineupload").fineUploader('reset');
+                    Pump.resetWysihtml5(view.$('#picture-description'));
+                    view.$('#picture-title').val("");
+		    view.waitOnClose = false;
+		    view.remove();
+		}  else {
+		    view.waitOnClose = false;
+		}
+            });
+	},
         postPicture: function(ev) {
             var view = this,
                 description = view.$('#post-picture #picture-description').val(),
