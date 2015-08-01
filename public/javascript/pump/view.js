@@ -788,6 +788,7 @@
                                                               notifications: Pump.principalUser.minorDirectInbox
                                                           }});
                         Pump.body.nav.render();
+			
                     });
                     if (Pump.config.sockjs) {
                         // Request a new challenge
@@ -1243,14 +1244,16 @@
         },
 	events: {
 	    "scroll": "handleScroll",
-	    "resize": "render"
 	},
 	initialize: function() {
-	    Pump.TemplateView.prototype.initialize.call(this);
-	    _.bindAll(this, 'handleScroll','render');
-	    this.listenTo(this.model, 'sync change', this.render);
-	    this.model.fetch();
-	    this.render();
+	    var view = this;
+	    Pump.TemplateView.prototype.initialize.call(view);
+	    _.bindAll(view, 'handleScroll');
+
+	    $(window).on('resize.resizeview', view.resize.bind(view));
+
+	    view.model.fetch();
+	    view.render();
 	},
         handleScroll: function() {
             this.didScroll = true;
@@ -1266,24 +1269,19 @@
             }
         },
 	render: function() {
-	    _.defer( function() {
-		if ($("#major-stream")) {
-		    if ($(document).find("div.navbar") && $(document).find("div.navbar").height()) {
-			if ($("#major-stream").offset()) {
-			    $("#major-stream").height ( $(window).innerHeight() 
-					      - $(document).find("div.navbar").height() 
-					      - $("#major-stream").offset().top);
-			} else {
-			    $("#major-stream").height ( $(window).innerHeight() 
-					      - $(document).find("div.navbar").height() );
-			}
-			
-		    } else {
-			$("#major-stream").height ( $(window).innerHeight() *0.75 );
-		    }
+	    var view = this;
+	    console.log("MajorStreamView: render");
+	    return this.trigger('render', this);
+	},
+	resize: function() {
+	    if (this.$el) {
+		if (this.$el.offset()) {
+		    this.$el.height( $(window).innerHeight() - this.$el.offset().top - 10 );
+		} else {
+		    this.$el.height( $(window).innerHeight() *0.75 );
 		}
-	    });
-	    return this;
+	    }
+
 	},
     });
 
@@ -1305,30 +1303,25 @@
 	    "resize": "render"
 	},
 	initialize: function() {
-	    Pump.TemplateView.prototype.initialize.call(this);
-	    _.bindAll(this, 'render');
-	    this.model.fetch();
-	    this.render();
+	    var view = this;
+	    Pump.TemplateView.prototype.initialize.call(view);
+
+	    $(window).on('resize.resizeview', view.resize.bind(view));
+
+	    view.model.fetch();
+	    view.render();
 	},
 	render: function() {
-	    _.defer( function() {
-		if ($("#minor-stream")) {
-		    if ($(document).find("div.navbar") && $(document).find("div.navbar").height()) {
-			if ($("#minor-stream").offset()) {
-			    $("#minor-stream").height ( $(window).innerHeight() 
-					      - $(document).find("div.navbar").height() 
-					      - $("#minor-stream").offset().top);
-			} else {
-			    $("#minor-stream").height ( $(window).innerHeight() 
-					      - $(document).find("div.navbar").height() );
-			}
-			
-		    } else {
-			$("#minor-stream").height ( $(window).innerHeight() *0.75 );
-		    }
-		}
-	    });
 	    return this;
+	},
+	resize: function() {
+	    if (this.$el) {
+		if (this.$el.offset()) {
+		    this.$el.height( $(window).innerHeight() - this.$el.offset().top - 10 );
+		} else {
+		    this.$el.height( $(window).innerHeight() *0.75 );
+		}
+	    }
 	},
     });
 
@@ -3560,11 +3553,6 @@
                 }
             });
         }
-    });
-
-    $(window).resize( function() { 
-	$("#major-stream").height($(window).innerHeight()-$(document).find("div.navbar").height()-$("#major-stream").offset().top);
-	$("#minor-stream").height(          $(window).innerHeight()-$(document).find("div.navbar").height() - $("#minor-stream").offset().top);
     });
 
 })(window._, window.$, window.Backbone, window.Pump);

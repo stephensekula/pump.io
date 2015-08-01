@@ -3,3 +3,22 @@
   <%= partial("minor-activity", {activity: activity, headless: headless}) %>
   <% }); %>
 </ul>
+
+<script>
+	var stream = document.getElementById("minor-stream");
+
+	function findOffsetTop(obj) {
+	  var offsetTop = 0;
+	  if (obj.offsetParent) {
+	    do { 
+	         offsetTop += obj.offsetTop;
+	       } while (obj = obj.offsetParent);
+          }
+          return offsetTop;
+        }
+	
+	stream.style['height'] = '' + 
+			         (window.innerHeight - findOffsetTop(stream) - 10) + 
+                                 'px';
+</script>
+
