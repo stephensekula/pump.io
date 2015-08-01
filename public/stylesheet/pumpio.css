@@ -316,6 +316,7 @@ button.safeclose {
     max-width: 90%;
     white-space: normal;
   }
+
   .navbar .btn-group .dropdown-menu:after {
     border: none;
   }
@@ -325,4 +326,8 @@ button.safeclose {
   #major-stream .media-body {
     display: inline;
   }
+}
+
+.dropdown-menu  > li > a  {
+    whitespace: normal;
 }
