@@ -593,12 +593,6 @@
                                          }});
                 }
             });
-
-	    // Set the size of the modal based on window and document information
-	    //if ( $("#modal-picture").offset().bottom < 10 ) {
-		//$("#modal-picture").height( $(window).innerHeight() - $("#major-stream-view").offset().top - 10 );
-		//$("#modal-picture").height( 50 );
-	    //}
 	    
             return false;
         },
@@ -647,8 +641,8 @@
         refreshView: function() {
             var view = this;
 	    Pump.refreshStreams();
-	    Pump.body.nav.render();
-	    //Pump.UserNav.render();
+	    // Refresh the content of the messages and notifications buttons
+	    Pump.getStreams();
         },
         getStreams: function() {
             var view = this,
@@ -713,12 +707,18 @@
 
     Pump.MessagesView = Pump.TemplateView.extend({
         templateName: "messages",
-        modelName: "messages"
+        modelName: "messages",
+	initialize: function() {
+	    this.model.fetch();
+	}
     });
 
     Pump.NotificationsView = Pump.TemplateView.extend({
         templateName: "notifications",
-        modelName: "notifications"
+        modelName: "notifications",
+	initialize: function() {
+	    this.model.fetch();
+	}
     });
 
     Pump.ContentView = Pump.TemplateView.extend({
@@ -1251,9 +1251,6 @@
 	    _.bindAll(view, 'handleScroll');
 
 	    $(window).on('resize.resizeview', view.resize.bind(view));
-
-	    view.model.fetch();
-	    view.render();
 	},
         handleScroll: function() {
             this.didScroll = true;
@@ -1270,8 +1267,8 @@
         },
 	render: function() {
 	    var view = this;
-	    console.log("MajorStreamView: render");
-	    return this.trigger('render', this);
+	    Pump.TemplateView.prototype.render.call(view);
+	    //return this.trigger('render', this);
 	},
 	resize: function() {
 	    if (this.$el) {
@@ -1307,11 +1304,9 @@
 	    Pump.TemplateView.prototype.initialize.call(view);
 
 	    $(window).on('resize.resizeview', view.resize.bind(view));
-
-	    view.model.fetch();
-	    view.render();
 	},
 	render: function() {
+	    Pump.TemplateView.prototype.render.call(this);
 	    return this;
 	},
 	resize: function() {
