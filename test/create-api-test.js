@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var assert = require("assert"),
     vows = require("vows"),
     Step = require("step"),
@@ -77,7 +79,7 @@ suite.addBatch({
                         var url = "http://localhost:4815/api/user/philippe/feed",
                             cred = makeCred(cl, pair),
                             callback = this.callback;
-                        
+
                         Step(
                             function() {
                                 var act = {

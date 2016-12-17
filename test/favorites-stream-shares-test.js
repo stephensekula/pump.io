@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var assert = require("assert"),
     vows = require("vows"),
     Step = require("step"),
@@ -147,7 +149,7 @@ var sameUser = function(url, objects) {
             "all items have shared = false": sharedIs(false)
         }
     };
-    
+
     return ctx;
 };
 
@@ -187,7 +189,7 @@ var justClient = function(url, objects) {
             "no items have the shared flag": noShared
         }
     };
-    
+
     return ctx;
 };
 
@@ -225,7 +227,7 @@ var otherUser = function(url, objects) {
             "all items have correct shared value": sharedIs(true)
         }
     };
-    
+
     return ctx;
 };
 
@@ -283,7 +285,7 @@ suite.addBatch({
                                 var group = this.group();
                                 _.times(20, function(i) {
                                     var act = {
-                                        to: [pair0.user.profile], 
+                                        to: [pair0.user.profile],
                                         cc: [{objectType: "collection",
                                               id: "http://activityschema.org/collection/public"}],
                                         verb: "post",
@@ -333,7 +335,7 @@ suite.addBatch({
                     "it works": function(err) {
                         assert.ifError(err);
                     },
-                    "and we check their favorites stream with same user credentials": 
+                    "and we check their favorites stream with same user credentials":
                     sameUser("http://localhost:4815/api/user/click/favorites"),
                     "and we check their favorites feed with client credentials":
                     justClient("http://localhost:4815/api/user/click/favorites"),

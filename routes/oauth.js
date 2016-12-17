@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var url = require("url"),
     qs = require("querystring"),
     Step = require("step"),
@@ -38,10 +40,9 @@ var authenticate = function(req, res) {
         application;
 
     if (!token) {
-        res.render("error", {page: {title: "Error",
+        res.status(400).render("error", {page: {title: "Error",
                                     nologin: true,
                                     url: req.originalUrl},
-                             status: 400,
                              error: new HTTPError("Must provide an oauth_token", 400)});
     } else {
         Step(
@@ -84,10 +85,9 @@ var authenticate = function(req, res) {
             },
             function(err, result) {
                 if (err) {
-                    res.render("error", {page: {title: "Error",
+                    res.status(400).render("error", {page: {title: "Error",
                                                 nologin: true,
                                                 url: req.originalUrl},
-                                         status: 400,
                                          error: err});
                     return;
                 }
@@ -109,14 +109,13 @@ var authenticate = function(req, res) {
 // Renders the authorization form
 // Will *skip* the authorization form if the user has already authenticated already logged in
 
-var authorize = function(err, req, res, authenticated, rt, application) {  
+var authorize = function(err, req, res, authenticated, rt, application) {
 
     var self = this,
         user;
 
     if (err) {
-        res.render("authentication", {status: 400,
-                                      page: {title: "Authentication",
+        res.status(400).render("authentication", {page: {title: "Authentication",
                                              nologin: true,
                                              url: req.originalUrl},
                                       token: rt.token,
@@ -151,8 +150,8 @@ var authorize = function(err, req, res, authenticated, rt, application) {
             if (err) throw err;
             req.principal = user.profile;
             req.principalUser = user;
-            res.local("principal", user.profile);
-            res.local("principalUser", user);
+            res.locals.principal = user.profile;
+            res.locals.principalUser = user;
             authc.setPrincipal(req.session, user.profile, this);
         },
         function(err) {
@@ -164,8 +163,7 @@ var authorize = function(err, req, res, authenticated, rt, application) {
         function(err, ats) {
             var url, sep;
             if (err) {
-                res.render("error", {status: 400,
-                                     page: {title: "Error",
+                res.status(400).render("error", {page: {title: "Error",
                                             nologin: true,
                                             url: req.originalUrl},
                                      error: err});
@@ -192,7 +190,7 @@ var authorize = function(err, req, res, authenticated, rt, application) {
             }
         }
     );
-};  
+};
 
 var authorizationFinished = function(err, req, res, rt) {
 

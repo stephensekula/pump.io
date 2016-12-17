@@ -2,6 +2,9 @@
 //
 // Views for the pump.io client UI
 //
+// @licstart  The following is the entire license notice for the
+//  JavaScript code in this page.
+//
 // Copyright 2011-2013, E14N https://e14n.com/
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +18,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
+// @licend  The above is the entire license notice
+// for the JavaScript code in this page.
 
 // XXX: this needs to be broken up into 3-4 smaller modules
 
@@ -168,9 +174,9 @@
                         });
                     }
                 }
-                
+
                 sub = new Pump[def.subView](options);
-                
+
                 if (def.attr) {
                     view[def.attr] = sub;
                 }
@@ -179,14 +185,46 @@
         render: function() {
             var view = this,
                 getTemplate = function(name, cb) {
-                    var url;
                     if (_.has(Pump.templates, name)) {
                         cb(null, Pump.templates[name]);
                     } else {
-                        $.get('/template/'+name+'.utml', function(data) {
+                        var url = "/template/"+ name;
+                        var clientUrls = ["account",
+                                          "authentication",
+                                          "authorization",
+                                          "authorization-finished",
+                                          "confirmed",
+                                          "doc",
+                                          "error",
+                                          "favorites",
+                                          "followers",
+                                          "inbox",
+                                          "javascript-disabled",
+                                          "list",
+                                          "lists",
+                                          "login",
+                                          "main",
+                                          "major-activity-page",
+                                          "minor-activity-page",
+                                          "object",
+                                          "recover",
+                                          "recover-code",
+                                          "recover-sent",
+                                          "register",
+                                          "remote",
+                                          "user",
+                                          "xss-error"];
+                        if (clientUrls.indexOf(name) !== -1) {
+                            url += "-client";
+                        }
+                        url += ".jade.js";
+
+                        $.get(url, function(data) {
                             var f;
                             try {
-                                f = _.template(data);
+                                /* jslint evil: true */
+                                eval(data);
+                                f = template;
                                 f.templateName = name;
                                 Pump.templates[name] = f;
                             } catch (err) {
@@ -202,12 +240,14 @@
                     if (_.has(Pump.templates, name)) {
                         return Pump.templates[name];
                     } else {
-                        res = $.ajax({url: '/template/'+name+'.utml',
+                        res = $.ajax({url: "/template/"+name+"-client.jade.js",
                                       async: false});
                         if (res.readyState === 4 &&
                             ((res.status >= 200 && res.status < 300) || res.status === 304)) {
                             data = res.responseText;
-                            f = _.template(data);
+                            /* jslint evil: true */
+                            eval(data);
+                            f = template;
                             f.templateName = name;
                             Pump.templates[name] = f;
                         }
@@ -266,79 +306,22 @@
             main.principalUser = (Pump.principalUser) ? Pump.principalUser.toJSON() : null;
             main.principal = (Pump.principal) ? Pump.principal.toJSON() : null;
 
-            main.partial = function(name, locals) {
-                var template, scoped, html;
-                if (locals) {
-                    scoped = _.clone(locals);
-                    _.extend(scoped, main);
-                } else {
-                    scoped = main;
-                }
-                if (!_.has(partials, name)) {
-                    Pump.debug("Didn't preload template " + name + " for " + view.templateName + " so fetching sync");
-                    // XXX: Put partials in the parts array of the
-                    // view to avoid this shameful sync call
-                    partials[name] = getTemplateSync(name);
-                }
-                template = partials[name];
-                if (!template) {
-                    throw new Error("No template for " + name);
-                }
-                try {
-                    html = template(scoped);
-                    return html;
-                } catch (e) {
-                    if (e instanceof Pump.TemplateError) {
-                        throw e;
-                    } else {
-                        throw new Pump.TemplateError(template, scoped, e);
-                    }
-                }
-            };
-
             // XXX: set main.page.title
 
-            // If there are sub-parts, we do them in parallel then
-            // do the main one. Note: only one level.
-
-            if (view.parts) {
-                pc = 0;
-                cnt = _.keys(view.parts).length;
-                _.each(view.parts, function(templateName) {
-                    getTemplate(templateName, function(err, template) {
-                        if (err) {
-                            Pump.error(err);
-                        } else {
-                            pc++;
-                            partials[templateName] = template;
-                            if (pc >= cnt) {
-                                getTemplate(view.templateName, function(err, template) {
-                                    if (err) {
-                                        Pump.error(err);
-                                        return;
-                                    }
-                                    runTemplate(template, main, setOutput);
-                                });
-                            }
-                        }
-                    });
-                });
-            } else {
-                getTemplate(view.templateName, function(err, template) {
-                    if (err) {
-                        Pump.error(err);
-                        return;
-                    }
-                    runTemplate(template, main, setOutput);
-                });
-            }
+            getTemplate(view.templateName, function(err, template) {
+                if (err) {
+                    Pump.error(err);
+                    return;
+                }
+                runTemplate(template, main, setOutput);
+            });
             return this;
         },
         stopSpin: function() {
-            this.$(':submit').prop('disabled', false).spin(false);
+            this.$(":submit").prop("disabled", false).spin(false);
         },
         startSpin: function() {
-            this.$(':submit').prop('disabled', true).spin(true);
+            this.$(":submit").prop("disabled", true).spin(true);
         },
         showAlert: function(msg, type) {
             var view = this;
@@ -351,9 +334,9 @@
 
             view.$("legend").after('<div class="alert alert-'+type+'">' +
                                    '<a class="close" data-dismiss="alert" href="#">&times;</a>' +
-                                   '<p class="alert-message">'+ msg + '</p>' +
-                                   '</div>');
-            
+                                   '<p class="alert-message">'+ msg + "</p>" +
+                                   "</div>");
+
             view.$(".alert").alert();
         },
         showError: function(msg) {
@@ -444,12 +427,12 @@
             aview.on("ready", function() {
 
                 var idx, $el = view.$(selector);
-                
+
                 aview.$el.hide();
 
                 view.placeSub(aview, $el);
 
-                aview.$el.fadeIn('slow');
+                aview.$el.fadeIn("slow");
             });
 
             aview.render();
@@ -525,14 +508,14 @@
     Pump.AnonymousNav = Pump.NavView.extend({
         tagName: "div",
         className: "container",
-        templateName: 'nav-anonymous'
+        templateName: "nav-anonymous"
     });
 
     Pump.UserNav = Pump.NavView.extend({
         tagName: "div",
         className: "container",
         modelName: "user",
-        templateName: 'nav-loggedin',
+        templateName: "nav-loggedin",
         parts: ["messages",
                 "notifications"],
         subs: {
@@ -558,21 +541,21 @@
         },
         postNoteModal: function() {
             var view = this;
-            view.showPostingModal('#post-note-button', Pump.PostNoteModal);
+            view.showPostingModal("#post-note-button", Pump.PostNoteModal);
         },
         postPictureModal: function() {
             var view = this;
-            view.showPostingModal('#post-picture-button', Pump.PostPictureModal);
+            view.showPostingModal("#post-picture-button", Pump.PostPictureModal);
         },
         showPostingModal: function(btn, Cls) {
             var view = this,
                 profile = Pump.principal,
                 lists = profile.lists,
                 startSpin = function() {
-                    view.$(btn).prop('disabled', true).spin(true);
+                    view.$(btn).prop("disabled", true).spin(true);
                 },
                 stopSpin = function() {
-                    view.$(btn).prop('disabled', false).spin(false);
+                    view.$(btn).prop("disabled", false).spin(false);
                 };
 
             startSpin();
@@ -650,7 +633,7 @@
     Pump.RemoteNav = Pump.NavView.extend({
         tagName: "div",
         className: "container",
-        templateName: 'nav-remote',
+        templateName: "nav-remote",
         events: {
             "click #logout": "logout"
         },
@@ -718,15 +701,15 @@
     });
 
     Pump.MainContent = Pump.ContentView.extend({
-        templateName: 'main'
+        templateName: "main"
     });
 
     Pump.LoginContent = Pump.ContentView.extend({
-        templateName: 'login',
+        templateName: "login",
         events: {
             "submit #login": "doLogin",
-            "keyup #password": "onKey",
-            "keyup #nickname": "onKey"
+            "input #password": "onKey",
+            "input #nickname": "onKey"
         },
         ready: function() {
             var view = this;
@@ -737,13 +720,13 @@
         },
         "onKey": function(event) {
             var view = this,
-                nickname = view.$('#nickname').val(),
-                password = view.$('#password').val();
+                nickname = view.$("#nickname").val(),
+                password = view.$("#password").val();
 
-            if (!nickname || !password || nickname.length === 0 || password.length < 8) {  
-                view.$(':submit').attr('disabled', 'disabled');
+            if (!nickname || !password || nickname.length === 0 || password.length < 8) {
+                view.$(":submit").attr("disabled", "disabled");
             } else {
-                view.$(':submit').removeAttr('disabled');
+                view.$(":submit").removeAttr("disabled");
             }
         },
         "doLogin": function() {
@@ -797,7 +780,7 @@
                 };
 
             view.startSpin();
-            
+
             options = {
                 contentType: "application/json",
                 data: JSON.stringify(params),
@@ -815,7 +798,7 @@
     });
 
     Pump.RegisterContent = Pump.ContentView.extend({
-        templateName: 'register',
+        templateName: "register",
         events: {
             "submit #registration": "register"
         },
@@ -937,7 +920,7 @@
     });
 
     Pump.RemoteContent = Pump.ContentView.extend({
-        templateName: 'remote',
+        templateName: "remote",
         ready: function() {
             var view = this;
             // setup subViews
@@ -948,7 +931,7 @@
         addContinueTo: function() {
             var view = this,
                 continueTo = Pump.getContinueTo();
-            
+
             if (continueTo && continueTo.length > 0) {
                 view.$("form#remote").append($("<input type='hidden' name='continueTo' value='"+Pump.htmlEncode(continueTo)+"'>"));
             }
@@ -956,7 +939,7 @@
     });
 
     Pump.RecoverContent = Pump.ContentView.extend({
-        templateName: 'recover',
+        templateName: "recover",
         events: {
             "submit #recover": "doRecover",
             "keyup #nickname": "onKey"
@@ -970,12 +953,12 @@
         },
         "onKey": function(event) {
             var view = this,
-                nickname = view.$('#nickname').val();
+                nickname = view.$("#nickname").val();
 
-            if (!nickname || nickname.length === 0) {  
-                view.$(':submit').attr('disabled', 'disabled');
+            if (!nickname || nickname.length === 0) {
+                view.$(":submit").attr("disabled", "disabled");
             } else {
-                view.$(':submit').removeAttr('disabled');
+                view.$(":submit").removeAttr("disabled");
             }
         },
         "doRecover": function() {
@@ -1003,7 +986,7 @@
                 };
 
             view.startSpin();
-            
+
             options = {
                 contentType: "application/json",
                 data: JSON.stringify(params),
@@ -1021,11 +1004,11 @@
     });
 
     Pump.RecoverSentContent = Pump.ContentView.extend({
-        templateName: 'recover-sent'
+        templateName: "recover-sent"
     });
 
     Pump.RecoverCodeContent = Pump.ContentView.extend({
-        templateName: 'recover-code',
+        templateName: "recover-code",
         ready: function() {
             var view = this;
             // setup subViews
@@ -1035,7 +1018,7 @@
         },
         "redeemCode": function() {
             var view = this,
-                params = {code: view.$el.data('code')},
+                params = {code: view.$el.data("code")},
                 options,
                 retries = 0,
                 onSuccess = function(data, textStatus, jqXHR) {
@@ -1100,11 +1083,11 @@
     });
 
     Pump.ConfirmEmailInstructionsContent = Pump.ContentView.extend({
-        templateName: 'confirm-email-instructions'
+        templateName: "confirm-email-instructions"
     });
 
     Pump.UserPageContent = Pump.ContentView.extend({
-        templateName: 'user',
+        templateName: "user",
         parts: ["profile-block",
                 "profile-nav",
                 "user-content-activities",
@@ -1174,7 +1157,7 @@
     });
 
     Pump.ActivitiesUserContent = Pump.TemplateView.extend({
-        templateName: 'user-content-activities',
+        templateName: "user-content-activities",
         parts: ["major-stream",
                 "minor-stream",
                 "major-activity",
@@ -1206,8 +1189,8 @@
     });
 
     Pump.MajorStreamView = Pump.TemplateView.extend({
-        templateName: 'major-stream',
-        modelName: 'activities',
+        templateName: "major-stream",
+        modelName: "activities",
         parts: ["major-activity",
                 "responses",
                 "reply",
@@ -1227,8 +1210,8 @@
     });
 
     Pump.MinorStreamView = Pump.TemplateView.extend({
-        templateName: 'minor-stream',
-        modelName: 'activities',
+        templateName: "minor-stream",
+        modelName: "activities",
         parts: ["minor-activity"],
         subs: {
             ".activity.minor": {
@@ -1243,7 +1226,7 @@
     });
 
     Pump.InboxContent = Pump.ContentView.extend({
-        templateName: 'inbox',
+        templateName: "inbox",
         parts: ["major-stream",
                 "minor-stream",
                 "major-activity",
@@ -1337,7 +1320,7 @@
     });
 
     Pump.MajorActivityView = Pump.TemplateView.extend({
-        templateName: 'major-activity',
+        templateName: "major-activity",
         parts: ["activity-object-list",
                 "responses",
                 "replies",
@@ -1352,7 +1335,7 @@
             "click .share": "shareObject",
             "click .unshare": "unshareObject",
             "click .comment": "openComment",
-            "click .object-image": "openImage",
+            "click .object-image": "openImage"
         },
         setupSubs: function() {
             var view = this,
@@ -1487,7 +1470,7 @@
                 model = view.model,
                 object = view.model.object,
                 modalView;
-            
+
             if (object && object.get("fullImage")) {
 
                 modalView = new Pump.LightboxModal({data: {object: object}});
@@ -1527,13 +1510,13 @@
             var view = this,
                 replies = view.model,
                 full = new Pump.FullReplyStreamView({model: replies});
-            
+
             Pump.body.startLoad();
 
             full.on("ready", function() {
                 full.$el.hide();
                 view.$el.replaceWith(full.$el);
-                full.$el.fadeIn('slow');
+                full.$el.fadeIn("slow");
                 Pump.body.endLoad();
             });
 
@@ -1589,7 +1572,7 @@
     });
 
     Pump.CommentForm = Pump.TemplateView.extend({
-        templateName: 'comment-form',
+        templateName: "comment-form",
         tagName: "div",
         className: "row comment-form",
         events: {
@@ -1626,7 +1609,7 @@
                         repl;
                     // These get stripped for "posts"; re-add it
 
-                    object.author = Pump.principal; 
+                    object.author = Pump.principal;
 
                     repl = new Pump.ReplyView({model: object});
 
@@ -1648,7 +1631,7 @@
     });
 
     Pump.MajorObjectView = Pump.TemplateView.extend({
-        templateName: 'major-object',
+        templateName: "major-object",
         parts: ["responses", "reply"],
         events: {
             "click .favorite": "favoriteObject",
@@ -1772,8 +1755,8 @@
     });
 
     Pump.ReplyView = Pump.TemplateView.extend({
-        templateName: 'reply',
-        modelName: 'reply',
+        templateName: "reply",
+        modelName: "reply",
         events: {
             "click .favorite": "favoriteObject",
             "click .unfavorite": "unfavoriteObject"
@@ -1798,7 +1781,7 @@
                 }
                 view.stopSpin();
             });
-            
+
             return false;
         },
         unfavoriteObject: function() {
@@ -1821,13 +1804,13 @@
                 }
                 view.stopSpin();
             });
-            
+
             return false;
         }
     });
 
     Pump.MinorActivityView = Pump.TemplateView.extend({
-        templateName: 'minor-activity',
+        templateName: "minor-activity",
         modelName: "activity"
     });
 
@@ -1883,13 +1866,13 @@
     });
 
     Pump.MajorPersonView = Pump.PersonView.extend({
-        templateName: 'major-person',
-        modelName: 'person'
+        templateName: "major-person",
+        modelName: "person"
     });
 
     Pump.ProfileBlock = Pump.PersonView.extend({
-        templateName: 'profile-block',
-        modelName: 'profile',
+        templateName: "profile-block",
+        modelName: "profile",
         parts: ["profile-responses"],
         initialize: function(options) {
             Pump.debug("Initializing profile-block #" + this.cid);
@@ -1898,7 +1881,7 @@
     });
 
     Pump.FavoritesContent = Pump.ContentView.extend({
-        templateName: 'favorites',
+        templateName: "favorites",
         parts: ["profile-block",
                 "profile-nav",
                 "user-content-favorites",
@@ -1929,7 +1912,7 @@
     });
 
     Pump.FavoritesUserContent = Pump.TemplateView.extend({
-        templateName: 'user-content-favorites',
+        templateName: "user-content-favorites",
         modelName: "favorites",
         parts: ["object-stream",
                 "major-object",
@@ -1947,7 +1930,7 @@
     });
 
     Pump.FollowersContent = Pump.ContentView.extend({
-        templateName: 'followers',
+        templateName: "followers",
         parts: ["profile-block",
                 "profile-nav",
                 "user-content-followers",
@@ -1981,8 +1964,8 @@
     });
 
     Pump.FollowersUserContent = Pump.TemplateView.extend({
-        templateName: 'user-content-followers',
-        modelName: 'followers',
+        templateName: "user-content-followers",
+        modelName: "followers",
         parts: ["people-stream",
                 "major-person",
                 "profile-responses"],
@@ -1998,7 +1981,7 @@
     });
 
     Pump.PeopleStreamView = Pump.TemplateView.extend({
-        templateName: 'people-stream',
+        templateName: "people-stream",
         modelName: "people",
         subs: {
             ".person.major": {
@@ -2010,10 +1993,10 @@
     });
 
     Pump.FollowingContent = Pump.ContentView.extend({
-        templateName: 'following',
+        templateName: "following",
         parts: ["profile-block",
                 "profile-nav",
-                'user-content-following',
+                "user-content-following",
                 "people-stream",
                 "major-person",
                 "profile-responses"],
@@ -2044,8 +2027,8 @@
     });
 
     Pump.FollowingUserContent = Pump.TemplateView.extend({
-        templateName: 'user-content-following',
-        modelName: 'following',
+        templateName: "user-content-following",
+        modelName: "following",
         parts: ["people-stream",
                 "major-person",
                 "profile-responses"],
@@ -2061,7 +2044,7 @@
     });
 
     Pump.ListsContent = Pump.ContentView.extend({
-        templateName: 'lists',
+        templateName: "lists",
         parts: ["profile-block",
                 "profile-nav",
                 "user-content-lists",
@@ -2088,7 +2071,7 @@
     });
 
     Pump.ListsUserContent = Pump.TemplateView.extend({
-        templateName: 'user-content-lists',
+        templateName: "user-content-lists",
         parts: ["list-menu",
                 "list-menu-item",
                 "list-content-lists"],
@@ -2108,7 +2091,7 @@
         templateName: "list-menu",
         modelName: "lists",
         parts: ["list-menu-item"],
-        el: '.list-menu-block',
+        el: ".list-menu-block",
         events: {
             "click .new-list": "newList"
         },
@@ -2132,15 +2115,15 @@
     });
 
     Pump.ListsListContent = Pump.TemplateView.extend({
-        templateName: 'list-content-lists'
+        templateName: "list-content-lists"
     });
 
     Pump.ListContent = Pump.ContentView.extend({
-        templateName: 'list',
+        templateName: "list",
         parts: ["profile-block",
                 "profile-nav",
                 "profile-responses",
-                'user-content-list',
+                "user-content-list",
                 "list-content-list",
                 "people-stream",
                 "major-person",
@@ -2178,7 +2161,7 @@
     });
 
     Pump.ListUserContent = Pump.TemplateView.extend({
-        templateName: 'user-content-list',
+        templateName: "user-content-list",
         parts: ["people-stream",
                 "list-content-list",
                 "major-person",
@@ -2206,7 +2189,7 @@
     });
 
     Pump.ListListContent = Pump.TemplateView.extend({
-        templateName: 'list-content-list',
+        templateName: "list-content-list",
         modelName: "list",
         parts: ["member-stream",
                 "member"],
@@ -2264,7 +2247,7 @@
     });
 
     Pump.MemberStreamView = Pump.TemplateView.extend({
-        templateName: 'member-stream',
+        templateName: "member-stream",
         modelName: "people",
         subs: {
             ".person.major": {
@@ -2279,8 +2262,8 @@
     });
 
     Pump.MemberView = Pump.TemplateView.extend({
-        templateName: 'member',
-        modelName: 'person',
+        templateName: "member",
+        modelName: "person",
         ready: function() {
             var view = this;
             // XXX: Bootstrap dependency
@@ -2324,7 +2307,7 @@
     });
 
     Pump.SettingsContent = Pump.ContentView.extend({
-        templateName: 'settings',
+        templateName: "settings",
         modelName: "profile",
         events: {
             "submit #settings": "saveSettings"
@@ -2347,10 +2330,10 @@
                         '<div class="qq-drop-processing"></div>' +
                         '<div class="qq-upload-button btn btn-success">{uploadButtonText}</div>' +
                         '<ul class="qq-upload-list"></ul>' +
-                        '</div>',
+                        "</div>",
                     classes: {
-                        success: 'alert alert-success',
-                        fail: 'alert alert-error'
+                        success: "alert alert-success",
+                        fail: "alert alert-error"
                     },
                     autoUpload: false,
                     multiple: false,
@@ -2389,10 +2372,10 @@
         saveProfile: function(img) {
             var view = this,
                 profile = Pump.principal,
-                props = {"displayName": view.$('#realname').val(),
-                         "location": { objectType: "place", 
-                                       displayName: view.$('#location').val() },
-                         "summary": view.$('#bio').val()};
+                props = {"displayName": view.$("#realname").val(),
+                         "location": { objectType: "place",
+                                       displayName: view.$("#location").val() },
+                         "summary": view.$("#bio").val()};
 
             if (img) {
                 props.image = img.get("image");
@@ -2426,7 +2409,7 @@
 
             if (haveNewAvatar) {
                 // This will save the profile afterwards
-                view.$("#avatar-fineupload").fineUploader('uploadStoredFiles');
+                view.$("#avatar-fineupload").fineUploader("uploadStoredFiles");
             } else {
                 // No new image
                 view.saveProfile(null);
@@ -2437,7 +2420,7 @@
     });
 
     Pump.AccountContent = Pump.ContentView.extend({
-        templateName: 'account',
+        templateName: "account",
         modelName: "user",
         events: {
             "submit #account": "saveAccount"
@@ -2445,8 +2428,8 @@
         saveAccount: function() {
             var view = this,
                 user = Pump.principalUser,
-                password = view.$('#password').val(),
-                repeat = view.$('#repeat').val();
+                password = view.$("#password").val(),
+                repeat = view.$("#repeat").val();
 
             if (password !== repeat) {
 
@@ -2479,13 +2462,13 @@
                           }
                          );
             }
-            
+
             return false;
         }
     });
 
     Pump.ObjectContent = Pump.ContentView.extend({
-        templateName: 'object',
+        templateName: "object",
         modelName: "object",
         parts: ["responses",
                 "reply",
@@ -2617,12 +2600,12 @@
     Pump.ChooseContactModal = Pump.TemplateView.extend({
         tagName: "div",
         className: "modal-holder",
-        templateName: 'choose-contact',
+        templateName: "choose-contact",
         ready: function() {
             var view = this;
-            view.$('.thumbnail').tooltip();
-            view.$('#add-contact').prop('disabled', true);
-            view.$('#add-contact').attr('disabled', 'disabled');
+            view.$(".thumbnail").tooltip();
+            view.$("#add-contact").prop("disabled", true);
+            view.$("#add-contact").attr("disabled", "disabled");
         },
         events: {
             "click .thumbnail": "toggleSelection",
@@ -2645,11 +2628,11 @@
             }
 
             if (view.toggled === 0) {
-                view.$('#add-contact').prop('disabled', true);
-                view.$('#add-contact').attr('disabled', 'disabled');
+                view.$("#add-contact").prop("disabled", true);
+                view.$("#add-contact").attr("disabled", "disabled");
             } else {
-                view.$('#add-contact').prop('disabled', false);
-                view.$('#add-contact').removeAttr('disabled');
+                view.$("#add-contact").prop("disabled", false);
+                view.$("#add-contact").removeAttr("disabled");
             }
         },
         addContact: function() {
@@ -2671,7 +2654,7 @@
 
             // Hide the modal
 
-            view.$el.modal('hide');
+            view.$el.modal("hide");
             view.remove();
 
             // Add each person
@@ -2714,12 +2697,12 @@
 
         tagName: "div",
         className: "modal-holder",
-        templateName: 'post-note',
+        templateName: "post-note",
         parts: ["recipient-selector"],
         ready: function() {
             var view = this;
 
-            view.$('#note-content').wysihtml5({
+            view.$("#note-content").wysihtml5({
                 customTemplates: Pump.wysihtml5Tmpl
             });
 
@@ -2731,9 +2714,9 @@
         },
         postNote: function(ev) {
             var view = this,
-                text = view.$('#post-note #note-content').val(),
-                to = view.$('#post-note #note-to').val(),
-                cc = view.$('#post-note #note-cc').val(),
+                text = view.$("#post-note #note-content").val(),
+                to = view.$("#post-note #note-to").val(),
+                cc = view.$("#post-note #note-cc").val(),
                 act = new Pump.Activity({
                     verb: "post",
                     object: {
@@ -2768,15 +2751,15 @@
             }
 
             view.startSpin();
-            
+
             Pump.newMajorActivity(act, function(err, act) {
                 if (err) {
                     view.showError(err);
                     view.stopSpin();
                 } else {
                     view.stopSpin();
-                    view.$el.modal('hide');
-                    Pump.resetWysihtml5(view.$('#note-content'));
+                    view.$el.modal("hide");
+                    Pump.resetWysihtml5(view.$("#note-content"));
                     // Reload the current page
                     Pump.addMajorActivity(act);
                     view.remove();
@@ -2788,7 +2771,7 @@
     Pump.PostPictureModal = Pump.TemplateView.extend({
         tagName: "div",
         className: "modal-holder",
-        templateName: 'post-picture',
+        templateName: "post-picture",
         parts: ["recipient-selector"],
         events: {
             "click #send-picture": "postPicture"
@@ -2799,7 +2782,7 @@
             view.$("#picture-to").select2(Pump.selectOpts());
             view.$("#picture-cc").select2(Pump.selectOpts());
 
-            view.$('#picture-description').wysihtml5({
+            view.$("#picture-description").wysihtml5({
                 customTemplates: Pump.wysihtml5Tmpl
             });
 
@@ -2816,10 +2799,10 @@
                         '<div class="qq-drop-processing"></div>' +
                         '<div class="qq-upload-button btn btn-success">{uploadButtonText}</div>' +
                         '<ul class="qq-upload-list"></ul>' +
-                        '</div>',
+                        "</div>",
                     classes: {
-                        success: 'alert alert-success',
-                        fail: 'alert alert-error'
+                        success: "alert alert-success",
+                        fail: "alert alert-error"
                     },
                     autoUpload: false,
                     multiple: false,
@@ -2830,8 +2813,8 @@
                 }).on("complete", function(event, id, fileName, responseJSON) {
 
                     var stream = Pump.principalUser.majorStream,
-                        to = view.$('#post-picture #picture-to').val(),
-                        cc = view.$('#post-picture #picture-cc').val(),
+                        to = view.$("#post-picture #picture-to").val(),
+                        cc = view.$("#post-picture #picture-cc").val(),
                         strToObj = function(str) {
                             var colon = str.indexOf(":"),
                                 type = str.substr(0, colon),
@@ -2867,11 +2850,11 @@
                             view.showError(err);
                             view.stopSpin();
                         } else {
-                            view.$el.modal('hide');
+                            view.$el.modal("hide");
                             view.stopSpin();
-                            view.$("#picture-fineupload").fineUploader('reset');
-                            Pump.resetWysihtml5(view.$('#picture-description'));
-                            view.$('#picture-title').val("");
+                            view.$("#picture-fineupload").fineUploader("reset");
+                            Pump.resetWysihtml5(view.$("#picture-description"));
+                            view.$("#picture-title").val("");
                             // Reload the current content
                             Pump.addMajorActivity(act);
                             view.remove();
@@ -2884,8 +2867,8 @@
         },
         postPicture: function(ev) {
             var view = this,
-                description = view.$('#post-picture #picture-description').val(),
-                title = view.$('#post-picture #picture-title').val(),
+                description = view.$("#post-picture #picture-description").val(),
+                title = view.$("#post-picture #picture-title").val(),
                 params = {};
 
             if (title) {
@@ -2898,11 +2881,11 @@
                 params.description = description;
             }
 
-            view.$("#picture-fineupload").fineUploader('setParams', params);
+            view.$("#picture-fineupload").fineUploader("setParams", params);
 
             view.startSpin();
 
-            view.$("#picture-fineupload").fineUploader('uploadStoredFiles');
+            view.$("#picture-fineupload").fineUploader("uploadStoredFiles");
         }
     });
 
@@ -2910,10 +2893,10 @@
 
         tagName: "div",
         className: "modal-holder",
-        templateName: 'new-list',
+        templateName: "new-list",
         ready: function() {
             var view = this;
-            view.$('#list-description').wysihtml5({
+            view.$("#list-description").wysihtml5({
                 customTemplates: Pump.wysihtml5Tmpl
             });
         },
@@ -2922,8 +2905,8 @@
         },
         saveNewList: function() {
             var view = this,
-                description = view.$('#new-list #list-description').val(),
-                name = view.$('#new-list #list-name').val(),
+                description = view.$("#new-list #list-description").val(),
+                name = view.$("#new-list #list-name").val(),
                 act;
 
             if (!name) {
@@ -2943,7 +2926,7 @@
                         content: description
                     })
                 });
-                
+
                 view.startSpin();
 
                 Pump.newMinorActivity(act, function(err, act) {
@@ -2953,10 +2936,10 @@
                         view.showError(err);
                     } else {
 
-                        view.$el.modal('hide');
+                        view.$el.modal("hide");
                         view.stopSpin();
-                        Pump.resetWysihtml5(view.$('#list-description'));
-                        view.$('#list-name').val("");
+                        Pump.resetWysihtml5(view.$("#list-description"));
+                        view.$("#list-name").val("");
 
                         view.remove();
 
@@ -2970,7 +2953,7 @@
                                 var rel;
                                 aview.$el.hide();
                                 $("#list-menu-inner").prepend(aview.$el);
-                                aview.$el.slideDown('fast');
+                                aview.$el.slideDown("fast");
                                 // Go to the new list page
                                 rel = Pump.rel(act.object.get("url"));
                                 Pump.router.navigate(rel, true);
@@ -2988,7 +2971,7 @@
     Pump.AreYouSureModal = Pump.TemplateView.extend({
         tagName: "div",
         className: "modal-holder",
-        templateName: 'are-you-sure',
+        templateName: "are-you-sure",
         events: {
             "click #yes": "yes",
             "click #no": "no"
@@ -2997,16 +2980,16 @@
             var view = this,
                 callback = view.options.callback;
 
-            view.$el.modal('hide');
+            view.$el.modal("hide");
             view.remove();
-            
+
             callback(null, true);
         },
         no: function() {
             var view = this,
                 callback = view.options.callback;
-            
-            view.$el.modal('hide');
+
+            view.$el.modal("hide");
             view.remove();
 
             callback(null, false);
@@ -3050,22 +3033,22 @@
 
             // Bootstrap components; let these through
 
-            if ($(el).hasClass('dropdown-toggle') ||
-                $(el).attr('data-toggle') == 'collapse') {
+            if ($(el).hasClass("dropdown-toggle") ||
+                $(el).attr("data-toggle") == "collapse") {
                 return true;
             }
 
             // Save a spot in case we come back
 
-            if ($(el).hasClass('save-continue-to')) {
+            if ($(el).hasClass("save-continue-to")) {
                 Pump.saveContinueTo();
-            } else if ($(el).hasClass('add-continue')) {
+            } else if ($(el).hasClass("add-continue")) {
                 Pump.continueTo = Pump.getContinueTo();
             }
 
             // For local <a>, use the router
 
-            if (!el.host || el.host == here.host) {
+            if (!el.host || el.host == here.host && !el.attributes["data-bypass"]) {
                 try {
                     Pump.debug("Navigating to " + el.pathname);
                     Pump.router.navigate(el.pathname, true);
@@ -3210,7 +3193,7 @@
 
         modalView.on("ready", function() {
             $("body").append(modalView.el);
-            modalView.$el.modal('show');
+            modalView.$el.modal("show");
             if (options.ready) {
                 options.ready();
             }
@@ -3222,7 +3205,7 @@
     };
 
     Pump.resetWysihtml5 = function(el) {
-        var fancy = el.data('wysihtml5');
+        var fancy = el.data("wysihtml5");
         if (fancy && fancy.editor && fancy.editor.clear) {
             fancy.editor.clear();
         }
@@ -3387,7 +3370,7 @@
                 prompt = "Delete this " + model.get("objectType") + "?";
 
             // Hide the dropdown, since we were selected
-            view.$el.dropdown('toggle');
+            view.$el.dropdown("toggle");
 
             Pump.areYouSure(prompt, function(err, sure) {
                 if (sure) {

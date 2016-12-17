@@ -1,15 +1,15 @@
 # pump.io
 
-Version 0.3.0
+Version 2.0.4
 
 This is pump.io. It's a stream server that does most of what people
 really want from a social network.
 
-[![Build Status](https://secure.travis-ci.org/e14n/pump.io.png)](http://travis-ci.org/e14n/pump.io)
+[![Build Status](https://secure.travis-ci.org/pump-io/pump.io.png)](http://travis-ci.org/pump-io/pump.io)
 
 ## License
 
-Copyright 2011-2014, E14N https://e14n.com/
+Copyright 2011-2016, E14N https://e14n.com/ and contributors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -42,8 +42,15 @@ The software is useful for at least these scenarios:
 * Activity stream functionality for an existing app
 * Experimenting with social software
 
-Version 0.2.0 will have a Web UI, which will probably make the whole
-thing much more enjoyable.
+It also comes with a web UI.
+
+## Wiki
+
+For more information please check out the [GitHub wiki](https://github.com/pump-io/pump.io/wiki)
+
+or clone it via the following command:
+
+    git clone https://github.com/pump-io/pump.io.wiki.git
 
 ## Installation
 
@@ -51,7 +58,7 @@ thing much more enjoyable.
 
 You'll need four things to get started:
 
-* node.js 0.8.0 or higher
+* node.js 4.x or 6.x
 * npm 1.1.0 or higher
 * A database server (see below)
 * The `graphicsmagick` package with the `gm` command
@@ -73,7 +80,7 @@ That should set up all the files and dependencies for you.
 If you want to set up the software in its own directory, you can clone
 the git repository, so:
 
-    git clone https://github.com/e14n/pump.io.git
+    git clone https://github.com/pump-io/pump.io.git
 
 You can then install the dependencies using `npm`:
 
@@ -114,13 +121,22 @@ Second, you can install in the `databank` directory.
 
 Note that you also need to install and configure your database server.
 
+ 
+
 ### Configuration
 
 pump.io uses a JSON file for configuration. It should be at
-`/etc/pump.io.json`.
+`/etc/pump.io.json` or on `~/.pump.io.json`.
 
 The `pump.io.json.sample` file should give you an idea of how to use
 it.
+
+The default config values are stored in the source file `lib/defaults.js`.
+
+You can override the config file location with the `-c` option.
+
+    pump -c <CONFIG_FILE>
+
 
 Here are the main configuration keys.
 
@@ -148,7 +164,7 @@ Here are the main configuration keys.
 * *nologger* If you're debugging or whatever, turn off
   logging. Defaults to false (leave logging on).
 * *logfile* Full path to the logfile. Logs are JSON in
-  [https://github.com/trentm/node-bunyan](bunyan) format.
+  [bunyan](https://github.com/trentm/node-bunyan) format.
 * *serverUser* If you're listening on a port lower than 1024, you need
   to be root. Set this to the name of a user to change to after the
   server is listening. `daemon` or `nobody` are good choices, or you
@@ -225,15 +241,64 @@ you want http://pump.yourdomain.example/ to proxy to the pump.io
 daemon listening on port 8000 on 127.0.0.1, use configuration options
 like this:
 
-   "hostname": "pump.yourdomain.example",
-   "urlPort": 80,
-   "address": "127.0.0.1",
-   "port": 8000
+    "hostname": "pump.yourdomain.example",
+    "urlPort": 80,
+    "address": "127.0.0.1",
+    "port": 8000
 
 ## Running the daemon
 
 You'll probably get a more reliable experience if you use
 [forever](https://npmjs.org/package/forever) to keep the daemon running.
+
+
+### Environment
+
+Set the env variable `NODE_DEBUG` to enable debugging.
+
+Example:
+
+    export NODE_DEBUG=dev,all,net,http,fs,tls,module,timers
+
+See [How to set NODE_DEBUG](http://www.juliengilli.com/2013/05/26/Using-Node.js-NODE_DEBUG-for-fun-and-profit/)
+
+
+## Using the command line tools
+
+### pump-register-app
+
+First use this tool to create the credentials file
+
+    ./bin/pump-register-app  -t <APPNAME>
+
+This will create the file `~/.pump.d/<SERVER>.json` that contains your credentials.
+
+    {
+    "client_id":"XXXX",
+    "client_secret":"YYYYY",
+    "expires_at":0
+    }
+
+It will also add an entry into the local database where you will find the
+clientID. Note that if you use the memory database the data will be lost
+between server runs and will need to rerun the configuration.
+
+
+#### pump-register-user
+
+Use this command to register a user:
+
+    ./bin/pump-register-user  -u <USERNAME> -p <PASSWORD>
+
+### pump-authorize
+
+After you register an app, you can authorize your user to use it.
+
+    ./bin/pump-authorize -u <USERNAME>
+
+When you do that it will ask you to open a website, login and verify the
+value. You paste that back in and all is good.
+
 
 ## Making changes
 
@@ -257,7 +322,7 @@ name first before making connections to other sites.
 
 If you find bugs, you can report them here:
 
-https://github.com/e14n/pump.io/issues
+https://github.com/pump-io/pump.io/issues
 
 You can also email me at evan@e14n.com.
 

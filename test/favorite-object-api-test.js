@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var assert = require("assert"),
     vows = require("vows"),
     Step = require("step"),
@@ -125,7 +127,7 @@ suite.addBatch({
                                 };
 
                             cred = makeCred(cl, pair);
-                                
+
                             httputil.postJSON(url, cred, act, this);
                         },
                         function(err, doc, response) {
@@ -176,7 +178,7 @@ suite.addBatch({
                                 };
 
                             var cred = makeCred(cl, pairs.cindy);
-                                
+
                             httputil.postJSON(url, cred, act, this);
                         },
                         function(err, doc, response) {
@@ -190,7 +192,7 @@ suite.addBatch({
                                     }
                                 },
                                 cred = makeCred(cl, pairs.bobby);
-                            
+
                             httputil.postJSON(url, cred, act, this);
                         },
                         function(err, doc, response) {
@@ -207,7 +209,7 @@ suite.addBatch({
                             url = "http://localhost:4815/api/user/bobby/favorites",
                             cb = this.callback;
 
-                            httputil.getJSON(url, cred, function(err, doc, response) {
+                        httputil.getJSON(url, cred, function(err, doc, response) {
                                 cb(err, doc, act);
                             });
                     },
@@ -227,7 +229,7 @@ suite.addBatch({
                             url = act.object.links.self.href,
                             cb = this.callback;
 
-                            httputil.getJSON(url, cred, function(err, doc) {
+                        httputil.getJSON(url, cred, function(err, doc) {
                                 cb(err, doc);
                             });
                     },
@@ -237,7 +239,7 @@ suite.addBatch({
                     },
                     "it includes the 'liked' flag": function(err, doc) {
                         assert.ifError(err);
-                        assert.include(doc, 'liked');
+                        assert.include(doc, "liked");
                         assert.isTrue(doc.liked);
                     }
                 },
@@ -247,7 +249,7 @@ suite.addBatch({
                             url = act.object.likes.url,
                             cb = this.callback;
 
-                            httputil.getJSON(url, cred, function(err, doc, response) {
+                        httputil.getJSON(url, cred, function(err, doc, response) {
                                 cb(err, doc, act);
                             });
                     },
@@ -292,7 +294,7 @@ suite.addBatch({
                                 };
 
                             var cred = makeCred(cl, pairs.alice);
-                                
+
                             httputil.postJSON(url, cred, act, this);
                         },
                         function(err, doc, response) {
@@ -306,7 +308,7 @@ suite.addBatch({
                                     }
                                 },
                                 cred = makeCred(cl, pairs.sam);
-                            
+
                             httputil.postJSON(url, cred, act, this);
                         },
                         function(err, doc, response) {
@@ -320,7 +322,7 @@ suite.addBatch({
                                     }
                                 },
                                 cred = makeCred(cl, pairs.sam);
-                            
+
                             httputil.postJSON(url, cred, act, this);
                         },
                         function(err, doc, response) {
@@ -363,7 +365,7 @@ suite.addBatch({
                                 };
 
                             var cred = makeCred(cl, pairs.peter);
-                            
+
                             httputil.postJSON(url, cred, act, this);
                         },
                         function(err, doc, response) {
@@ -377,7 +379,7 @@ suite.addBatch({
                                     }
                                 },
                                 cred = makeCred(cl, pairs.greg);
-                            
+
                             httputil.postJSON(url, cred, act, this);
                         },
                         function(err, doc, response) {
@@ -391,7 +393,7 @@ suite.addBatch({
                                     }
                                 },
                                 cred = makeCred(cl, pairs.greg);
-                            
+
                             httputil.postJSON(url, cred, act, this);
                         },
                         function(err, doc, response) {
@@ -408,7 +410,7 @@ suite.addBatch({
                             url = "http://localhost:4815/api/user/greg/favorites",
                             cb = this.callback;
 
-                            httputil.getJSON(url, cred, function(err, doc, response) {
+                        httputil.getJSON(url, cred, function(err, doc, response) {
                                 cb(err, doc, act);
                             });
                     },
@@ -423,7 +425,7 @@ suite.addBatch({
                             url = act.object.likes.url,
                             cb = this.callback;
 
-                            httputil.getJSON(url, cred, function(err, doc, response) {
+                        httputil.getJSON(url, cred, function(err, doc, response) {
                                 cb(err, doc);
                             });
                     },
@@ -463,7 +465,7 @@ suite.addBatch({
                                 };
 
                             var cred = makeCred(cl, pairs.mike);
-                            
+
                             httputil.postJSON(url, cred, act, this);
                         },
                         function(err, doc, response) {
@@ -477,7 +479,7 @@ suite.addBatch({
                                     }
                                 },
                                 cred = makeCred(cl, pairs.carol);
-                            
+
                             httputil.postJSON(url, cred, act, this);
                         },
                         function(err, doc, response) {
@@ -518,7 +520,7 @@ suite.addBatch({
                                 };
 
                             var cred = makeCred(cl, pairs.tiger);
-                                
+
                             httputil.postJSON(url, cred, act, this);
                         },
                         function(err, doc, response) {
@@ -590,7 +592,7 @@ suite.addBatch({
                         var cb = this.callback,
                             url = "http://localhost:4815/api/user/cousinoliver/favorites",
                             cred = makeCred(cl, pair);
-                                
+
                         httputil.getJSON(url, cred, function(err, feed, resp) {
                             cb(err, feed);
                         });
@@ -606,7 +608,7 @@ suite.addBatch({
                         assert.greater(feed.items.length, 0);
                         assert.isObject(feed.items[0]);
                         assert.include(feed.items[0], "id");
-                        assert.equal("urn:uuid:ab70a4c0-ed3a-11e1-965f-0024beb67924", feed.items[0].id); 
+                        assert.equal("urn:uuid:ab70a4c0-ed3a-11e1-965f-0024beb67924", feed.items[0].id);
                     }
                 },
                 "and we get the user's feed": {
@@ -614,7 +616,7 @@ suite.addBatch({
                         var cb = this.callback,
                             url = "http://localhost:4815/api/user/cousinoliver/feed",
                             cred = makeCred(cl, pair);
-                                
+
                         httputil.getJSON(url, cred, function(err, feed, resp) {
                             cb(err, feed);
                         });

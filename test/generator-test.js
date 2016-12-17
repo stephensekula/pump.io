@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var assert = require("assert"),
     vows = require("vows"),
     Step = require("step"),
@@ -112,7 +114,7 @@ suite.addBatch({
                         var cb = this.callback,
                             cred = makeCred(cl, pair),
                             url = "http://localhost:4815/api/user/george/feed";
-                        
+
                         httputil.getJSON(url, cred, function(err, doc, resp) {
                             cb(err, doc);
                         });
@@ -140,7 +142,7 @@ suite.addBatch({
                                     content: "Hello, world!"
                                 }
                             };
-                        
+
                         httputil.postJSON(url, cred, act, function(err, doc, resp) {
                             cb(err, doc);
                         });
@@ -165,7 +167,7 @@ suite.addBatch({
                                     content: "i love george"
                                 }
                             };
-                        
+
                         httputil.postJSON(url, cred, act, function(err, doc, resp) {
                             cb(err, doc);
                         });
@@ -190,7 +192,7 @@ suite.addBatch({
                                     displayName: "rosy2.jpg"
                                 }
                             };
-                        
+
                         httputil.postJSON(url, cred, act, function(err, doc, resp) {
                             cb(err, doc);
                         });
@@ -212,7 +214,7 @@ suite.addBatch({
                                 id: "urn:uuid:b7144562-486f-11e2-b1c7-2c8158efb9e9",
                                 displayName: "Cosmo G. Spacely"
                             };
-                        
+
                         httputil.postJSON(url, cred, person, function(err, doc, resp) {
                             cb(err);
                         });
@@ -225,7 +227,7 @@ suite.addBatch({
                             var cb = this.callback,
                                 cred = makeCred(cl, pair),
                                 url = "http://localhost:4815/api/user/george/feed";
-                            
+
                             httputil.getJSON(url, cred, function(err, doc, resp) {
                                 cb(err, doc);
                             });
@@ -255,7 +257,7 @@ suite.addBatch({
                                 id: "urn:uuid:298cd086-4871-11e2-adf2-2c8158efb9e9",
                                 displayName: "IMG3143.JPEG"
                             };
-                        
+
                         httputil.postJSON(url, cred, image, function(err, doc, resp) {
                             cb(err);
                         });
@@ -268,7 +270,7 @@ suite.addBatch({
                             var cb = this.callback,
                                 cred = makeCred(cl, pair),
                                 url = "http://localhost:4815/api/user/george/feed";
-                            
+
                             httputil.getJSON(url, cred, function(err, doc, resp) {
                                 cb(err, doc);
                             });
@@ -303,7 +305,7 @@ suite.addBatch({
                                         content: "Stop this crazy thing."
                                     }
                                 };
-                        
+
                                 httputil.postJSON(url, cred, act, this);
                             },
                             function(err, doc, resp) {
@@ -327,7 +329,7 @@ suite.addBatch({
                             var cb = this.callback,
                                 cred = makeCred(cl, pair),
                                 url = "http://localhost:4815/api/user/george/feed";
-                            
+
                             httputil.getJSON(url, cred, function(err, doc, resp) {
                                 cb(err, doc);
                             });
@@ -362,7 +364,7 @@ suite.addBatch({
                                         content: "I quit."
                                     }
                                 };
-                        
+
                                 httputil.postJSON(url, cred, act, this);
                             },
                             function(err, doc, resp) {
@@ -385,7 +387,7 @@ suite.addBatch({
                             var cb = this.callback,
                                 cred = makeCred(cl, pair),
                                 url = "http://localhost:4815/api/user/george/feed";
-                            
+
                             httputil.getJSON(url, cred, function(err, doc, resp) {
                                 cb(err, doc);
                             });
@@ -443,7 +445,7 @@ suite.addBatch({
                             var cb = this.callback,
                                 cred = makeCred(cl, pair),
                                 url = "http://localhost:4815/api/user/george/feed";
-                            
+
                             httputil.getJSON(url, cred, function(err, doc, resp) {
                                 cb(err, doc);
                             });

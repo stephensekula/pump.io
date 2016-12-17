@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var _ = require("underscore"),
     assert = require("assert"),
     vows = require("vows");
@@ -62,7 +64,7 @@ var validActivityObject = function(obj) {
     assert.include(obj, "objectType");
     assert.isString(obj.objectType);
     if (_.has(obj, "displayName")) {
-	assert.isString(obj.displayName);
+        assert.isString(obj.displayName);
     }
     if (_.has(obj, "published")) {
         validDate(obj.published);

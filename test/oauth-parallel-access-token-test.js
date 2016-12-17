@@ -1,4 +1,4 @@
-// oauth-test.js
+// oauth-parallel-access-token-test.js
 //
 // Test the client registration API
 //
@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var assert = require("assert"),
     vows = require("vows"),
     Step = require("step"),
@@ -23,7 +25,6 @@ var assert = require("assert"),
     querystring = require("querystring"),
     http = require("http"),
     OAuth = require("oauth-evanp").OAuth,
-    Browser = require("zombie"),
     httputil = require("./lib/http"),
     oauthutil = require("./lib/oauth"),
     setupApp = oauthutil.setupApp,

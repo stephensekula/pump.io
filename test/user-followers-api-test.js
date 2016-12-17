@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var assert = require("assert"),
     http = require("http"),
     vows = require("vows"),
@@ -87,7 +89,7 @@ suite.addBatch({
             var cb = this.callback;
             setupApp(cb);
         },
-        
+
         "it works": function(err, app) {
             assert.ifError(err);
             assert.isObject(app);
@@ -98,7 +100,7 @@ suite.addBatch({
                 app.close();
             }
         },
-        
+
         "and we create a new client": {
             topic: function() {
                 newClient(this.callback);
@@ -108,7 +110,7 @@ suite.addBatch({
                 assert.ifError(err);
                 assert.isObject(cl);
             },
-            
+
             "and we try to get followers for a non-existent user": {
                 topic: function(cl) {
                     var cb = this.callback;
@@ -160,10 +162,10 @@ suite.addBatch({
                     assert.ifError(err);
                 },
 
-                "and we get the options on the user followers endpoint": 
+                "and we get the options on the user followers endpoint":
                 httputil.endpoint("/api/user/tyrion/followers", ["GET"]),
 
-                "and we get the options on the user following endpoint": 
+                "and we get the options on the user following endpoint":
                 httputil.endpoint("/api/user/tyrion/followers", ["GET"]),
 
                 "and we GET the followers list without OAuth credentials": {
@@ -572,7 +574,7 @@ suite.addBatch({
                                 }
                             };
                             for (i = 0; i < 100; i++) {
-                                q.enqueue(httputil.postJSON, 
+                                q.enqueue(httputil.postJSON,
                                           ["http://localhost:4815/api/user/wolf"+i+"/feed",
                                            makeCred(cl, pairs[i]),
                                            act],
@@ -592,7 +594,7 @@ suite.addBatch({
                         var callback = this.callback,
                             url = "http://localhost:4815/api/user/nymeria/followers",
                             cred = makeCred(cl, pair);
-                        
+
                         httputil.getJSON(url, cred, function(err, doc, resp) {
                             callback(err, doc);
                         });
@@ -619,7 +621,7 @@ suite.addBatch({
                             var callback = this.callback,
                                 url = feed.links.prev.href,
                                 cred = makeCred(cl, pair);
-                            
+
                             httputil.getJSON(url, cred, function(err, doc, resp) {
                                 callback(err, doc);
                             });
@@ -634,7 +636,7 @@ suite.addBatch({
                             var callback = this.callback,
                                 url = feed.links.next.href,
                                 cred = makeCred(cl, pair);
-                            
+
                             httputil.getJSON(url, cred, function(err, doc, resp) {
                                 callback(err, doc);
                             });
@@ -650,7 +652,7 @@ suite.addBatch({
                         var callback = this.callback,
                             url = "http://localhost:4815/api/user/nymeria/followers?count=40",
                             cred = makeCred(cl, pair);
-                        
+
                         httputil.getJSON(url, cred, function(err, doc, resp) {
                             callback(err, doc);
                         });
@@ -678,7 +680,7 @@ suite.addBatch({
                         var callback = this.callback,
                             url = "http://localhost:4815/api/user/nymeria/followers?count=200",
                             cred = makeCred(cl, pair);
-                        
+
                         httputil.getJSON(url, cred, function(err, doc, resp) {
                             callback(err, doc);
                         });
@@ -705,7 +707,7 @@ suite.addBatch({
                         var callback = this.callback,
                             url = "http://localhost:4815/api/user/nymeria/followers?offset=20",
                             cred = makeCred(cl, pair);
-                        
+
                         httputil.getJSON(url, cred, function(err, doc, resp) {
                             callback(err, doc);
                         });
@@ -732,7 +734,7 @@ suite.addBatch({
                             var callback = this.callback,
                                 url = feed.links.prev.href,
                                 cred = makeCred(cl, pair);
-                            
+
                             httputil.getJSON(url, cred, function(err, doc, resp) {
                                 callback(err, doc);
                             });
@@ -747,7 +749,7 @@ suite.addBatch({
                             var callback = this.callback,
                                 url = feed.links.next.href,
                                 cred = makeCred(cl, pair);
-                            
+
                             httputil.getJSON(url, cred, function(err, doc, resp) {
                                 callback(err, doc);
                             });
@@ -809,7 +811,7 @@ suite.addBatch({
                         var callback = this.callback,
                             url = "http://localhost:4815/api/user/varys/following",
                             cred = makeCred(cl, pair);
-                        
+
                         httputil.getJSON(url, cred, function(err, doc, resp) {
                             callback(err, doc);
                         });
@@ -836,7 +838,7 @@ suite.addBatch({
                             var callback = this.callback,
                                 url = feed.links.prev.href,
                                 cred = makeCred(cl, pair);
-                            
+
                             httputil.getJSON(url, cred, function(err, doc, resp) {
                                 callback(err, doc);
                             });
@@ -851,7 +853,7 @@ suite.addBatch({
                             var callback = this.callback,
                                 url = feed.links.next.href,
                                 cred = makeCred(cl, pair);
-                            
+
                             httputil.getJSON(url, cred, function(err, doc, resp) {
                                 callback(err, doc);
                             });
@@ -867,7 +869,7 @@ suite.addBatch({
                         var callback = this.callback,
                             url = "http://localhost:4815/api/user/varys/following?count=40",
                             cred = makeCred(cl, pair);
-                        
+
                         httputil.getJSON(url, cred, function(err, doc, resp) {
                             callback(err, doc);
                         });
@@ -895,7 +897,7 @@ suite.addBatch({
                         var callback = this.callback,
                             url = "http://localhost:4815/api/user/varys/following?count=50",
                             cred = makeCred(cl, pair);
-                        
+
                         httputil.getJSON(url, cred, function(err, doc, resp) {
                             callback(err, doc);
                         });
@@ -922,7 +924,7 @@ suite.addBatch({
                         var callback = this.callback,
                             url = "http://localhost:4815/api/user/varys/following?offset=20",
                             cred = makeCred(cl, pair);
-                        
+
                         httputil.getJSON(url, cred, function(err, doc, resp) {
                             callback(err, doc);
                         });
@@ -949,7 +951,7 @@ suite.addBatch({
                             var callback = this.callback,
                                 url = feed.links.prev.href,
                                 cred = makeCred(cl, pair);
-                            
+
                             httputil.getJSON(url, cred, function(err, doc, resp) {
                                 callback(err, doc);
                             });
@@ -964,7 +966,7 @@ suite.addBatch({
                             var callback = this.callback,
                                 url = feed.links.next.href,
                                 cred = makeCred(cl, pair);
-                            
+
                             httputil.getJSON(url, cred, function(err, doc, resp) {
                                 callback(err, doc);
                             });

@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var assert = require("assert"),
     vows = require("vows"),
     databank = require("databank"),
@@ -100,7 +102,7 @@ suite.addBatch({
                 }
 
                 DatabankObject.bank = db;
-                
+
                 mod = require("../lib/model/person");
 
                 if (!mod) {

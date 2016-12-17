@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var assert = require("assert"),
     vows = require("vows"),
     _ = require("underscore"),
@@ -121,7 +123,7 @@ var suite = vows.describe("mailer module interface").addBatch({
                                     var i,
                                         rgroup = this.group(),
                                         sgroup = this.group(),
-                                        to, 
+                                        to,
                                         message;
                                     for (i = 1; i < 51; i++) {
                                         to = (123+i) + "@fakestreet.example";

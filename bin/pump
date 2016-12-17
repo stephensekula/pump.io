@@ -20,21 +20,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var cluster = require("cluster"),
     os = require("os"),
     fs = require("fs"),
     path = require("path"),
     Logger = require("bunyan"),
     _ = require("underscore"),
+    colors = require("colors/safe"),
+    warningColors = colors.yellow,
     argv = require("optimist")
         .usage("Usage: $0 -c <configfile>")
         .alias("c", "config")
         .describe("c", "Configuration file (default: /etc/pump.io.json and ~/.pump.io.json)")
         .argv,
     Dispatch = require("../lib/dispatch"),
-    makeApp = require("../lib/app").makeApp;
+    makeApp = require("../lib/app").makeApp,
+    majorRelease = Number(process.versions.node.split(".")[0]);
 
-// We first get config files, then launch some cluster apps
+// First we warn if the user is on a deprecated Node.js version
+
+if (majorRelease < 4 && cluster.isMaster) {
+    // Console warning
+    console.warn(colors.red.bold.underline("WARNING:") + colors.red.bold(" running pump.io on Node.js " + process.versions.node + " has security implications and is deprecated!"));
+    console.warn(warningColors("Please upgrade to Node.js 4 or higher to silence this warning."));
+    console.warn(warningColors("See https://github.com/pump-io/pump.io/issues/1212 for details."));
+}
+
+// Then we get config files and launch some cluster apps
 
 var main = function() {
     var config = getConfig(argv.c);
@@ -54,11 +68,11 @@ var getConfig = function(filename) {
     if (filename) {
         files = [filename];
     } else {
-        files = ['/etc/pump.io.json'];
+        files = ["/etc/pump.io.json"];
         if (process.env.HOME) {
-            files.push(path.join(process.env.HOME, ".pump.io.json"))
+            files.push(path.join(process.env.HOME, ".pump.io.json"));
         }
-    }   
+    }
 
     // This is all sync
     for (i = 0; i < files.length; i++) {
@@ -68,7 +82,8 @@ var getConfig = function(filename) {
                 parsed = JSON.parse(raw);
                 _.extend(config, parsed);
             } catch (err) {
-                console.log(err);
+                console.error("Error parsing JSON configuration:", err.toString());
+                console.error("Try using a JSON validator.");
                 process.exit(1);
             }
         }
@@ -107,19 +122,19 @@ var launchApps = function(config) {
 
         // Restart child processes when they die
 
-        cluster.on('exit', function(worker, code, signal) {
+        cluster.on("exit", function(worker, code, signal) {
             var exitCode = worker.process.exitCode;
-            clusterLog.warn('worker ' + worker.process.pid + ' died ('+exitCode+'). restarting...');
+            clusterLog.warn("worker " + worker.process.pid + " died ("+exitCode+"). restarting...");
             cluster.fork();
         });
 
     } else {
-        makeApp(config, function(err, app) {
+        makeApp(config, function(err, appServer) {
             if (err) {
                 console.error(err);
                 process.exit(1);
             } else {
-                app.run(function(err) {
+                appServer.run(function(err) {
                     if (err) {
                         console.error(err);
                         process.exit(1);

@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var assert = require("assert"),
     vows = require("vows"),
     Step = require("step"),
@@ -218,7 +220,7 @@ suite.addBatch({
                             newPair(cl, "elaine", "bo0merang", this);
                         },
                         function(err, pair) {
-                            var act; 
+                            var act;
                             if (err) throw err;
                             cred = makeCred(cl, pair);
                             act = {
@@ -282,7 +284,7 @@ suite.addBatch({
                             newPair(cl, "tuesday", "i*have*feelings", this);
                         },
                         function(err, pair) {
-                            var act; 
+                            var act;
                             if (err) throw err;
                             cred = makeCred(cl, pair);
                             act = {

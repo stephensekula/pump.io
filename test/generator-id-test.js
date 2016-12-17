@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var assert = require("assert"),
     vows = require("vows"),
     Step = require("step"),
@@ -119,26 +121,26 @@ suite.addBatch({
                                     content: "Hello, world!"
                                 }
                             },
-			    first, second;
+                            first, second;
 
-			Step(
-			    function() {
-				httputil.postJSON(url, cred, act, this);
-			    },
-			    function(err, doc, resp) {
-				if (err) throw err;
-				first = doc;
-				httputil.postJSON(url, cred, act, this);
-			    },
-			    function(err, doc, resp) {
-				if (err) {
-				    cb(err, null, null);
-				} else {
-				    second = doc;
-				    cb(null, first, second);
-				}
-			    }
-			);
+                        Step(
+                            function() {
+                                httputil.postJSON(url, cred, act, this);
+                            },
+                            function(err, doc, resp) {
+                                if (err) throw err;
+                                first = doc;
+                                httputil.postJSON(url, cred, act, this);
+                            },
+                            function(err, doc, resp) {
+                                if (err) {
+                                    cb(err, null, null);
+                                } else {
+                                    second = doc;
+                                    cb(null, first, second);
+                                }
+                            }
+                        );
                     },
                     "the generator IDs are the same": function(err, first, second) {
                         assert.ifError(err);
@@ -146,10 +148,10 @@ suite.addBatch({
                         assert.isObject(first.generator);
                         assert.isObject(second);
                         assert.isObject(second.generator);
-			assert.equal(first.generator.id, second.generator.id);
+                        assert.equal(first.generator.id, second.generator.id);
                     }
                 }
-	    }
+            }
         }
     }
 });

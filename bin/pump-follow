@@ -2,7 +2,7 @@
 
 // -*- mode: javascript -*-
 
-// follow.js
+// pump-follow
 //
 // follow another user
 //
@@ -19,6 +19,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+"use strict";
 
 var _ = require("underscore"),
     Step = require("step"),
@@ -60,13 +62,13 @@ Step(
     },
     function(err, cred) {
         if (err) throw err;
-	var activity = {
+        var activity = {
             "verb": "follow",
-	    "object": {
-		"objectType": "person",
-		id: otherId
-	    }
-	};
+            "object": {
+                "objectType": "person",
+                id: otherId
+            }
+        };
         var endpoint = url.format({
             protocol: ((port == 443) ? "https" : "http"),
             host: ((port == 80) ? server : server + ":" + port),

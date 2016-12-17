@@ -16,8 +16,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var connect = require("connect"),
-    send = connect.middleware.static.send,
+    send = require("send"),
     cutils = connect.utils,
     fs = require("fs"),
     path = require("path"),
@@ -35,6 +37,8 @@ var addRoutes = function(app) {
     app.get("/shared/showdown.js", sharedFile("showdown/src/showdown.js"));
     app.get("/shared/underscore.js", sharedFile("underscore/underscore.js"));
     app.get("/shared/underscore-min.js", sharedFile("underscore/underscore-min.js"));
+    // TODO serve a minified version of this
+    app.get("/shared/jade-runtime.js", sharedFile("jade/runtime.js"));
 };
 
 var sharedFile = function(fname) {
@@ -42,7 +46,7 @@ var sharedFile = function(fname) {
     var root = path.join(__dirname, "..", "node_modules");
 
     return function(req, res, next) {
-        send(req, res, next, {path: fname, root: root});
+        send(req, root + "/" + fname).pipe(res);
     };
 };
 

@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var _ = require("underscore"),
     assert = require("assert"),
     vows = require("vows"),
@@ -59,7 +61,7 @@ suite.addBatch({
                 }
 
                 DatabankObject.bank = db;
-                
+
                 mod = require("../lib/model/stream");
 
                 if (!mod) {

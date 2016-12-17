@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var assert = require("assert"),
     http = require("http"),
     vows = require("vows"),
@@ -98,7 +100,7 @@ suite.addBatch({
                 assert.equal(user.profile.id, "http://localhost:4815/api/user/jamesbond/profile");
             },
 
-            "and we get the options on the user profile api endpoint": 
+            "and we get the options on the user profile api endpoint":
             httputil.endpoint("/api/user/jamesbond/profile", ["GET", "PUT"]),
 
             "and we GET the user profile data": {

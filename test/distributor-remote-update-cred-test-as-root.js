@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var assert = require("assert"),
     vows = require("vows"),
     Step = require("step"),
@@ -96,7 +98,7 @@ suite.addBatch({
                             }
                         },
                         callback = this.callback;
-                    
+
                     pj(url, cred1, act, function(err, body, resp) {
                         if (err) {
                             callback(err, null);
@@ -136,7 +138,7 @@ suite.addBatch({
                                         }
                                     },
                                     callback = this.callback;
-                                
+
                                 pj(url, cred1, act, function(err, body, resp) {
                                     if (err) {
                                         callback(err, null);
@@ -161,7 +163,7 @@ suite.addBatch({
                                     topic: function(second, first, cred1, cred2, social, photo) {
                                         var url = "http://photo.localhost/api/user/bob/inbox",
                                             callback = this.callback;
-                                        
+
                                         gj(url, cred2, function(err, feed, resp) {
                                             if (err) {
                                                 callback(err, null, null);

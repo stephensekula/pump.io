@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var assert = require("assert"),
     vows = require("vows"),
     Step = require("step"),
@@ -118,7 +120,7 @@ suite.addBatch({
                             }
                         },
                         callback = this.callback;
-                    
+
                     pj(url, cred1, act, function(err, body, resp) {
                         if (err) {
                             callback(err, null);

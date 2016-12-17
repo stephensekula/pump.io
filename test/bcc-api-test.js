@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var assert = require("assert"),
     vows = require("vows"),
     Step = require("step"),
@@ -142,7 +144,7 @@ suite.addBatch({
                         var cred = makeCred(cl, users.professor.pair),
                             callback = this.callback,
                             url = doc.id;
-                        
+
                         httputil.getJSON(url, cred, function(err, act, resp) {
                             callback(err, act);
                         });
@@ -161,7 +163,7 @@ suite.addBatch({
                         var cred = makeCred(cl, users.gilligan.pair),
                             callback = this.callback,
                             url = doc.id;
-                        
+
                         httputil.getJSON(url, cred, function(err, act, resp) {
                             callback(err, act);
                         });
@@ -180,7 +182,7 @@ suite.addBatch({
                         var cred = makeCred(cl, users.professor.pair),
                             callback = this.callback,
                             url = "http://localhost:4815/api/user/gilligan/feed";
-                        
+
                         httputil.getJSON(url, cred, function(err, feed, resp) {
                             callback(err, feed);
                         });
@@ -202,7 +204,7 @@ suite.addBatch({
                         var cred = makeCred(cl, users.gilligan.pair),
                             callback = this.callback,
                             url = "http://localhost:4815/api/user/gilligan/feed";
-                        
+
                         httputil.getJSON(url, cred, function(err, feed, resp) {
                             callback(err, feed);
                         });
@@ -345,7 +347,7 @@ suite.addBatch({
                         var cred = makeCred(cl, users.mrhowell.pair),
                             callback = this.callback,
                             url = doc.id;
-                        
+
                         httputil.getJSON(url, cred, function(err, act, resp) {
                             callback(err, act);
                         });
@@ -364,7 +366,7 @@ suite.addBatch({
                         var cred = makeCred(cl, users.maryanne.pair),
                             callback = this.callback,
                             url = doc.id;
-                        
+
                         httputil.getJSON(url, cred, function(err, act, resp) {
                             callback(err, act);
                         });
@@ -383,7 +385,7 @@ suite.addBatch({
                         var cred = makeCred(cl, users.mrhowell.pair),
                             callback = this.callback,
                             url = "http://localhost:4815/api/user/maryanne/feed";
-                        
+
                         httputil.getJSON(url, cred, function(err, feed, resp) {
                             callback(err, feed);
                         });
@@ -405,7 +407,7 @@ suite.addBatch({
                         var cred = makeCred(cl, users.maryanne.pair),
                             callback = this.callback,
                             url = "http://localhost:4815/api/user/maryanne/feed";
-                        
+
                         httputil.getJSON(url, cred, function(err, feed, resp) {
                             callback(err, feed);
                         });

@@ -2,9 +2,9 @@
 
 // -*- mode: javascript -*-
 
-// postnote.js
+// pump-create-group
 //
-// Post a note with the given text
+// create a group
 //
 // Copyright 2011-2012, E14N https://e14n.com/
 //
@@ -19,6 +19,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+"use strict";
 
 var _ = require("underscore"),
     Step = require("step"),
@@ -54,8 +56,8 @@ Step(
         var activity = {
             "verb": "create",
             "object": {
-	        "objectType": "group",
-	        "displayName": note
+                "objectType": "group",
+                "displayName": note
             }
         };
         var endpoint = url.format({

@@ -16,13 +16,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var urlparse = require("url").parse,
     databank = require("databank"),
     _ = require("underscore"),
     Step = require("step"),
-    validator = require("validator"),
-    check = validator.check,
-    sanitize = validator.sanitize,
     HTTPError = require("../lib/httperror").HTTPError,
     URLMaker = require("../lib/urlmaker").URLMaker,
     User = require("../lib/model/user").User,
@@ -112,7 +111,7 @@ var hostMeta = function(req, res, next) {
     for (i = 0; i < links.length; i++) {
         res.write(Link(links[i]) + "\n");
     }
-    
+
     res.end("</XRD>\n");
 };
 
@@ -264,7 +263,7 @@ var lrdd = function(req, res, next) {
     for (i = 0; i < links.length; i++) {
         res.write(Link(links[i]) + "\n");
     }
-    
+
     res.end("</XRD>\n");
 };
 

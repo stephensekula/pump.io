@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var util = require("util"),
     assert = require("assert"),
     vows = require("vows"),
@@ -59,7 +61,7 @@ suite.addBatch({
                 dirname = path.join(os.tmpDir(),
                                     "upload-file-test",
                                     ""+Date.now());
-            mkdirp(dirname, function (err) {
+            mkdirp(dirname, function(err) {
                 if (err) {
                     callback(err, null);
                 } else {
@@ -72,7 +74,7 @@ suite.addBatch({
             assert.isString(dir);
         },
         teardown: function(dir) {
-            rimraf(dir, function(err) { 
+            rimraf(dir, function(err) {
             });
         },
         "And we set up two apps": {
@@ -129,7 +131,7 @@ suite.addBatch({
                                 object: cred2.user.profile
                             },
                             callback = this.callback;
-                        
+
                         pj(url, cred1, act, function(err, body, resp) {
                             if (err) {
                                 callback(err, null);

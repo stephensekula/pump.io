@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var assert = require("assert"),
     vows = require("vows"),
     fs = require("fs"),
@@ -29,7 +31,7 @@ var assert = require("assert"),
     oauthutil = require("./lib/oauth"),
     xrdutil = require("./lib/xrd");
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 var suite = vows.describe("bounce 80 to 443 app interface");
 

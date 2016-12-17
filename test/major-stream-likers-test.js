@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var assert = require("assert"),
     vows = require("vows"),
     Step = require("step"),
@@ -96,7 +98,7 @@ var sameUser = function(url, objects) {
                 assert.include(activity, "object");
                 assert.isObject(activity.object);
                 assert.include(activity.object, "likes");
-                if (activity.object.secretNumber % 2 == 0) {
+                if (activity.object.secretNumber % 2 === 0) {
                     assert.include(activity.object.likes, "items");
                     assert.isArray(activity.object.likes.items);
                     assert.lengthOf(activity.object.likes.items, 1);
@@ -106,7 +108,7 @@ var sameUser = function(url, objects) {
             });
         };
     }
-    
+
     return ctx;
 };
 
@@ -167,7 +169,7 @@ var justClient = function(url, objects) {
                 assert.include(activity, "object");
                 assert.isObject(activity.object);
                 assert.include(activity.object, "likes");
-                if (activity.object.secretNumber % 2 == 0) {
+                if (activity.object.secretNumber % 2 === 0) {
                     assert.include(activity.object.likes, "items");
                     assert.isArray(activity.object.likes.items);
                     assert.lengthOf(activity.object.likes.items, 1);
@@ -177,7 +179,7 @@ var justClient = function(url, objects) {
             });
         };
     }
-    
+
     return ctx;
 };
 
@@ -235,7 +237,7 @@ var otherUser = function(url, objects) {
                 assert.include(activity, "object");
                 assert.isObject(activity.object);
                 assert.include(activity.object, "likes");
-                if (activity.object.secretNumber % 2 == 0) {
+                if (activity.object.secretNumber % 2 === 0) {
                     assert.include(activity.object.likes, "items");
                     assert.isArray(activity.object.likes.items);
                     assert.lengthOf(activity.object.likes.items, 1);
@@ -245,7 +247,7 @@ var otherUser = function(url, objects) {
             });
         };
     }
-    
+
     return ctx;
 };
 
@@ -291,7 +293,7 @@ suite.addBatch({
                                 var group = this.group();
                                 _.times(20, function(i) {
                                     var act = {
-                                        to: [pair.user.profile], 
+                                        to: [pair.user.profile],
                                         cc: [{objectType: "collection",
                                               id: "http://activityschema.org/collection/public"}],
                                         verb: "post",
@@ -308,7 +310,7 @@ suite.addBatch({
                                 var group = this.group();
                                 if (err) throw err;
                                 _.each(posts, function(post, i) {
-                                    if (post.object.secretNumber % 2 == 0) {
+                                    if (post.object.secretNumber % 2 === 0) {
                                         var act = {
                                             verb: "favorite",
                                             object: post.object
@@ -329,17 +331,17 @@ suite.addBatch({
                     "it works": function(err) {
                         assert.ifError(err);
                     },
-                    "and we check their major inbox with same user credentials": 
+                    "and we check their major inbox with same user credentials":
                     sameUser("http://localhost:4815/api/user/humbaba/inbox/major"),
-                    "and we check their major feed with same user credentials": 
+                    "and we check their major feed with same user credentials":
                     sameUser("http://localhost:4815/api/user/humbaba/feed/major"),
                     "and we check their major direct inbox with same user credentials":
                     sameUser("http://localhost:4815/api/user/humbaba/inbox/direct/major"),
-                    "and we check their favorites with same user credentials": 
+                    "and we check their favorites with same user credentials":
                     sameUser("http://localhost:4815/api/user/humbaba/favorites", true),
                     "and we check their major feed with client credentials":
                     justClient("http://localhost:4815/api/user/humbaba/feed/major"),
-                    "and we check their favorites with client credentials": 
+                    "and we check their favorites with client credentials":
                     justClient("http://localhost:4815/api/user/humbaba/favorites", true),
                     "and we register another user": {
                         topic: function(pair, cl) {

@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var assert = require("assert"),
     vows = require("vows"),
     _ = require("underscore"),
@@ -111,7 +113,7 @@ suite.addBatch({
                                     }
                                 );
                             };
-                        
+
                         total = places.length * sentences.length * actorIds.length * moods.length * tags.length;
 
                         Step(
@@ -144,7 +146,7 @@ suite.addBatch({
                                             displayName: moods[i % moods.length]
                                         }
                                     };
-                                    q.enqueue(createAndDeliver, 
+                                    q.enqueue(createAndDeliver,
                                               [act],
                                               group());
                                 }
@@ -438,7 +440,7 @@ suite.addBatch({
                                     },
                                     function(err) {
                                         if (err) {
-                                            cb(err); 
+                                            cb(err);
                                         } else {
                                             cb(null);
                                         }
@@ -450,7 +452,7 @@ suite.addBatch({
                         Step(
                             function() {
                                 Stream.create({name: "test-2"}, this);
-                             },
+                            },
                             function(err, result) {
                                 var group = this.group();
                                 if (err) throw err;
@@ -507,7 +509,7 @@ suite.addBatch({
                             topic: function(filtered) {
                                 var callback = this.callback,
                                     Person = require("../lib/model/person").Person;
-                                
+
                                 Step(
                                     function() {
                                         filtered.getObjects(0, 10, this);

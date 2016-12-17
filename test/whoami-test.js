@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var assert = require("assert"),
     vows = require("vows"),
     Step = require("step"),
@@ -56,7 +58,7 @@ suite.addBatch({
         "it works": function(err, app) {
             assert.ifError(err);
         },
-        "and we check the whoami endpoint": 
+        "and we check the whoami endpoint":
         httputil.endpoint("/api/whoami", ["GET"]),
         "and we get a new client": {
             topic: function() {

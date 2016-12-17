@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var assert = require("assert"),
     vows = require("vows"),
     databank = require("databank"),
@@ -34,7 +36,7 @@ var tc = JSON.parse(fs.readFileSync(path.join(__dirname, "config.json")));
 
 suite.addBatch({
     "When we get the ActivityObject class": {
-        topic: function() { 
+        topic: function() {
             var cb = this.callback;
             // Need this to make IDs
 
@@ -50,7 +52,7 @@ suite.addBatch({
                 var cls;
 
                 DatabankObject.bank = db;
-                
+
                 cls = require("../lib/model/activityobject").ActivityObject;
 
                 cb(null, cls);

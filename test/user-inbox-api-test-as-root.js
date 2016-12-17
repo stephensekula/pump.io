@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var assert = require("assert"),
     vows = require("vows"),
     Step = require("step"),
@@ -59,11 +61,11 @@ var assoc = function(id, token, ts, callback) {
 
     if (!ts) ts = Date.now();
 
-    httputil.dialbackPost(URL, 
-                          id, 
-                          token, 
-                          ts, 
-                          requestBody, 
+    httputil.dialbackPost(URL,
+                          id,
+                          token,
+                          ts,
+                          requestBody,
                           "application/x-www-form-urlencoded",
                           parseJSON);
 };
@@ -104,7 +106,7 @@ suite.addBatch({
                 assert.ifError(err);
                 assert.isObject(cred);
             },
-            "and we check the inbox endpoint": 
+            "and we check the inbox endpoint":
             httputil.endpoint("/api/user/louisck/inbox", ["GET", "POST"]),
             "and we post to the inbox without credentials": {
                 topic: function() {

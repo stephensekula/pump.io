@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var assert = require("assert"),
     vows = require("vows"),
     Step = require("step"),
@@ -201,6 +203,7 @@ suite.addBatch({
                                 content: "Hello, world!"
                             }
                         };
+
                     httputil.postJSON("http://localhost:4815/api/user/gerold/feed", cred, act, function(err, act, response) {
                         cb(err, act);
                     });
@@ -211,7 +214,7 @@ suite.addBatch({
                 "and we GET the activity with different credentials than the author": {
                     topic: function(act, cred) {
                         var cb = this.callback;
-                        
+
                         Step(
                             function() {
                                 newCredentials("harold", "1077*hastings", this);
@@ -246,7 +249,7 @@ suite.addBatch({
                                     "Content-Type": "application/json"
                                 }
                             };
-                        
+
                         http.get(options, function(response) {
                             if (response.statusCode < 400 || response.statusCode >= 500) {
                                 cb(new Error("Unexpected response code " + response.statusCode));
@@ -359,11 +362,11 @@ suite.addBatch({
                     topic: function(act, cred) {
                         var cb = this.callback,
                             newact = JSON.parse(JSON.stringify(act));
-                        
+
                         newact.mood = {
                             displayName: "Friendly"
                         };
-                        
+
                         Step(
                             function() {
                                 newCredentials("ignace", "katt+brick", this);
@@ -405,7 +408,7 @@ suite.addBatch({
                                 }
                             },
                             newact = JSON.parse(JSON.stringify(act));
-                        
+
                         newact.mood = {
                             displayName: "Friendly"
                         };
@@ -431,7 +434,7 @@ suite.addBatch({
                         var cb = this.callback,
                             nuke = _(cred).clone(),
                             newact = JSON.parse(JSON.stringify(act));
-                        
+
                         newact.mood = {
                             displayName: "Friendly"
                         };
@@ -456,7 +459,7 @@ suite.addBatch({
                         var cb = this.callback,
                             nuke = _(cred).clone(),
                             newact = JSON.parse(JSON.stringify(act));
-                        
+
                         newact.mood = {
                             displayName: "Friendly"
                         };
@@ -481,7 +484,7 @@ suite.addBatch({
                         var cb = this.callback,
                             nuke = _(cred).clone(),
                             newact = JSON.parse(JSON.stringify(act));
-                        
+
                         newact.mood = {
                             displayName: "Friendly"
                         };
@@ -506,7 +509,7 @@ suite.addBatch({
                         var cb = this.callback,
                             nuke = _(cred).clone(),
                             newact = JSON.parse(JSON.stringify(act));
-                        
+
                         newact.mood = {
                             displayName: "Friendly"
                         };
@@ -547,7 +550,7 @@ suite.addBatch({
                 "and we DELETE the activity with different credentials than the author": {
                     topic: function(act, cred) {
                         var cb = this.callback;
-                        
+
                         Step(
                             function() {
                                 newCredentials("jeremy", "b4ntham!", this);
@@ -606,7 +609,7 @@ suite.addBatch({
                     topic: function(act, cred) {
                         var cb = this.callback,
                             nuke = _(cred).clone();
-                        
+
                         nuke.consumer_key = "NOTAKEY";
 
                         httputil.delJSON(act.id, nuke, function(err, doc, response) {
@@ -627,7 +630,7 @@ suite.addBatch({
                     topic: function(act, cred) {
                         var cb = this.callback,
                             nuke = _(cred).clone();
-                        
+
                         nuke.consumer_secret = "NOTASECRET";
 
                         httputil.delJSON(act.id, nuke, function(err, doc, response) {
@@ -648,7 +651,7 @@ suite.addBatch({
                     topic: function(act, cred) {
                         var cb = this.callback,
                             nuke = _(cred).clone();
-                        
+
                         nuke.token = "NOTATOKEN";
 
                         httputil.delJSON(act.id, nuke, function(err, doc, response) {
@@ -669,7 +672,7 @@ suite.addBatch({
                     topic: function(act, cred) {
                         var cb = this.callback,
                             nuke = _(cred).clone();
-                        
+
                         nuke.token_secret = "NOTATOKENSECRET";
 
                         httputil.delJSON(act.id, nuke, function(err, doc, response) {
@@ -797,7 +800,7 @@ suite.addBatch({
                             }
                         };
 
-                        httputil.putJSON(url, cred, act, function(err, got, resp) {
+                    httputil.putJSON(url, cred, act, function(err, got, resp) {
                             if (err && err.statusCode && err.statusCode == 404) {
                                 cb(null);
                             } else if (err) {
@@ -817,7 +820,7 @@ suite.addBatch({
                     var cb = this.callback,
                         url = "http://localhost:4815/api/activity/NONEXISTENT";
 
-                        httputil.getJSON(url, cred, function(err, got, resp) {
+                    httputil.getJSON(url, cred, function(err, got, resp) {
                             if (err && err.statusCode && err.statusCode == 404) {
                                 cb(null);
                             } else if (err) {
@@ -837,7 +840,7 @@ suite.addBatch({
                     var cb = this.callback,
                         url = "http://localhost:4815/api/activity/NONEXISTENT";
 
-                        httputil.delJSON(url, cred, function(err, got, resp) {
+                    httputil.delJSON(url, cred, function(err, got, resp) {
                             if (err && err.statusCode && err.statusCode == 404) {
                                 cb(null);
                             } else if (err) {

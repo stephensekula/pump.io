@@ -16,16 +16,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 // Adds to globals
-require("set-immediate");
 
 var databank = require("databank"),
     _ = require("underscore"),
     Step = require("step"),
     validator = require("validator"),
     OAuth = require("oauth-evanp").OAuth,
-    check = validator.check,
-    sanitize = validator.sanitize,
     filters = require("../lib/filters"),
     version = require("../lib/version").version,
     HTTPError = require("../lib/httperror").HTTPError,
@@ -97,7 +96,7 @@ var addRoutes = function(app) {
     // Users
     app.get("/api/user/:nickname", smw, anyReadAuth, reqUser, getUser);
     app.put("/api/user/:nickname", userWriteOAuth, reqUser, sameUser, putUser);
-    app.del("/api/user/:nickname", userWriteOAuth, reqUser, sameUser, delUser);
+    app.delete("/api/user/:nickname", userWriteOAuth, reqUser, sameUser, delUser);
 
     app.get("/api/user/:nickname/profile", smw, anyReadAuth, reqUser, personType, getObject);
     app.put("/api/user/:nickname/profile", userWriteOAuth, reqUser, sameUser, personType, reqGenerator, putObject);
@@ -163,7 +162,7 @@ var addRoutes = function(app) {
 
     app.get("/api/activity/:uuid", smw, anyReadAuth, reqActivity, actorOrRecipient, getActivity);
     app.put("/api/activity/:uuid", userWriteOAuth, reqActivity, actorOnly, putActivity);
-    app.del("/api/activity/:uuid", userWriteOAuth, reqActivity, actorOnly, delActivity);
+    app.delete("/api/activity/:uuid", userWriteOAuth, reqActivity, actorOnly, delActivity);
 
     // Collection members
 
@@ -193,7 +192,7 @@ var addRoutes = function(app) {
 
     app.get("/api/:type/:uuid", smw, anyReadAuth, requestObject, authorOrRecipient, getObject);
     app.put("/api/:type/:uuid", userWriteOAuth, requestObject, authorOnly, reqGenerator, putObject);
-    app.del("/api/:type/:uuid", userWriteOAuth, requestObject, authorOnly, reqGenerator, deleteObject);
+    app.delete("/api/:type/:uuid", userWriteOAuth, requestObject, authorOnly, reqGenerator, deleteObject);
 
     app.get("/api/:type/:uuid/likes", smw, anyReadAuth, requestObject, authorOrRecipient, objectLikes);
     app.get("/api/:type/:uuid/replies", smw, anyReadAuth, requestObject, authorOrRecipient, objectReplies);
@@ -631,8 +630,7 @@ var createUser = function(req, res, next) {
                     res.render("welcome",
                                {page: {title: "Welcome"},
                                 profile: user.profile,
-                                service: svc,
-                                layout: false},
+                                service: svc},
                                this);
                 },
                 function(err, text) {
@@ -673,15 +671,13 @@ var createUser = function(req, res, next) {
                                {principal: user.profile,
                                 principalUser: user,
                                 confirmation: confirmation,
-                                confirmationURL: confirmationURL,
-                                layout: false},
+                                confirmationURL: confirmationURL},
                                this.parallel());
                     res.render("confirmation-email-text",
                                {principal: user.profile,
                                 principalUser: user,
                                 confirmation: confirmation,
-                                confirmationURL: confirmationURL,
-                                layout: false},
+                                confirmationURL: confirmationURL},
                                this.parallel());
                 },
                 function(err, html, text) {
@@ -739,12 +735,11 @@ var createUser = function(req, res, next) {
             next(new HTTPError("No email address", 400));
             return;
         } else {
-            try {
-                check(props.email).isEmail();
+            if (validator.isEmail(props.email)) {
                 email = props.email;
                 delete props.email;
-            } catch(e) {
-                next(new HTTPError(e.message, 400));
+            } else {
+                next(new HTTPError("Invalid email address provided", 400));
                 return;
             }
         }
@@ -929,7 +924,7 @@ var postActivity = function(req, res, next) {
     var props = Scrubber.scrubActivity(req.body),
         activity = new Activity(props),
         finishAndSend = function(profile, activity, callback) {
-            
+
             var dupe = new Activity(_.clone(activity));
 
             Step(
@@ -1538,8 +1533,11 @@ var streamArgs = function(req, defaultCount, maxCount) {
         }
 
         if (_(req.query).has("count")) {
-            check(req.query.count, "Count must be between 0 and " + maxCount).isInt().min(0).max(maxCount);
-            args.count = sanitize(req.query.count).toInt();
+            if (!validator.isInt(req.query.count, {min: 0, max: maxCount})) {
+                throw new Error("Count must be between 0 and " + maxCount);
+            }else {
+                args.count = validator.toInt(req.query.count);
+            }
         } else {
             args.count = defaultCount;
         }
@@ -1548,16 +1546,22 @@ var streamArgs = function(req, defaultCount, maxCount) {
         // XXX: Check "before" and "since" for URI...?
 
         if (_(req.query).has("before")) {
-            check(req.query.before).notEmpty();
-            args.before = sanitize(req.query.before).trim();
+            if (validator.isNull(req.query.before)) {
+                throw new Error(req.query.before + " is null");
+            } else {
+                args.before = validator.trim(req.query.before);
+            }
         }
 
         if (_(req.query).has("since")) {
             if (_(args).has("before")) {
                 throw new Error("Can't have both 'before' and 'since' parameters");
             }
-            check(req.query.since).notEmpty();
-            args.since = sanitize(req.query.since).trim();
+            if (validator.isNull(req.query.since)) {
+                throw new Error(req.query.since + " is null");
+            }else {
+                args.since = validator.trim(req.query.since);
+            }
         }
 
         if (_(req.query).has("offset")) {
@@ -1567,8 +1571,11 @@ var streamArgs = function(req, defaultCount, maxCount) {
             if (_(args).has("since")) {
                 throw new Error("Can't have both 'since' and 'offset' parameters");
             }
-            check(req.query.offset, "Offset must be an integer greater than or equal to zero").isInt().min(0);
-            args.start = sanitize(req.query.offset).toInt();
+            if (!validator.isInt(req.query.offset, {min:0})) {
+                throw new Error("Offset must be an integer greater than or equal to zero");
+            }else {
+                args.start = validator.toInt(req.query.offset);
+            }
         }
 
         if (!_(req.query).has("offset") && !_(req.query).has("since") && !_(req.query).has("before")) {
@@ -1590,7 +1597,7 @@ var streamArgs = function(req, defaultCount, maxCount) {
 };
 
 var whoami = function(req, res, next) {
-    res.redirect("/api/user/"+req.principalUser.nickname+"/profile", 302);
+    res.redirect(302, URLMaker.makeURL("/api/user/"+req.principalUser.nickname+"/profile"));
 };
 
 var reqProxy = function(req, res, next) {

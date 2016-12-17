@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+"use strict";
+
 var assert = require("assert"),
     vows = require("vows"),
     databank = require("databank"),
@@ -42,7 +44,7 @@ suite.addBatch({
         "it works": function(err, app) {
             assert.ifError(err);
         },
-        "and we check the dialback endpoint": 
+        "and we check the dialback endpoint":
         httputil.endpoint("/api/proxy/AAAAAAAA", ["GET"])
     }
 });
